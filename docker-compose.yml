@@ -8,10 +8,16 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8001:8001
-    #env_file:
-    #  - ./backend/.env
-    #volumes:
-    #  - .:/app
-    #depends_on:
-    #  - redis
-    #  - db
+#    env_file:
+#      - .env
+    depends_on:
+      - pdb
+
+  pdb:
+    image: postgres:15.4
+    environment:
+      - POSTGRES_USER=payam
+      - POSTGRES_PASSWORD=payam
+      - POSTGRES_DB=foo
+    ports:
+      - 5432:5432

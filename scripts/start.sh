@@ -1,6 +1,5 @@
 #!/bin/bash
-#cd /app/backend
-#$SHELL
-#/bin/sh -c "pwd"
-#/bin/sh -c "ls -l"
+
+python /app/scripts/backend_pre_start.py
+alembic upgrade head
 /bin/sh -c "uvicorn app.main:app --reload --host 0.0.0.0 --port 8001"

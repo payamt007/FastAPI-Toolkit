@@ -28,6 +28,7 @@ async def init() -> None:
             # Try to create session to check if DB is awake
             await conn.execute(select(1))
     except Exception as e:
+        print(e)
         logger.error(e)
         raise e
 
