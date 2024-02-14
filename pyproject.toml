@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "backend"
+version = "0.1.0"
+description = "A Sample FastAPI app"
+authors = ["Payam Taheri"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.109"
+uvicorn = "^0.27"
+sqlmodel = "0.0.14"
+asyncpg = "^0.29"
+redis = "^4"
+celery = "^5"
+alembic = "^1"
+tenacity = "^8"
+
+[tool.poetry.group.lint.dependencies]
+black = "^23"
+flake8 = "^6"
+celery-stubs = "^0.1"
+isort = "^5"
+mypy = "^1"
+
+[tool.poetry.group.doc.dependencies]
+mkdocstrings = "^0.22"
+mkdocs = "^1"
+mkdocs-material = "^9"
+mkdocstrings-python = "^1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
