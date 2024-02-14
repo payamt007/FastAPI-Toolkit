@@ -34,6 +34,5 @@ COPY . .
 
 RUN chmod +x /app/scripts/start.sh
 RUN chmod +x /app/scripts/prestart.sh
-#RUN ["/app/scripts/prestart.sh"]
 
-CMD ["/app/scripts/start.sh"]
+ENTRYPOINT ["/app/scripts/start.sh"]
