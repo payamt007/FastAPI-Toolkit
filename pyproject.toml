@@ -16,6 +16,7 @@ redis = "^4"
 celery = "^5"
 alembic = "^1"
 tenacity = "^8"
+aiosqlite = "^0.19"
 
 [tool.poetry.group.lint.dependencies]
 black = "^23"

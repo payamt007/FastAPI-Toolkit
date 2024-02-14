@@ -31,10 +31,12 @@ async def init() -> None:
         logger.error(e)
         raise e
 
+
 async def main() -> None:
     logger.info("Initializing service")
     await init()
     logger.info("Service finished initializing")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

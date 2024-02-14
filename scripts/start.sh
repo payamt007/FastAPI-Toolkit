@@ -3,4 +3,4 @@
 #$SHELL
 #/bin/sh -c "pwd"
 #/bin/sh -c "ls -l"
-/bin/sh -c "uvicorn app.main:app --reload"
+/bin/sh -c "uvicorn app.main:app --reload --host 0.0.0.0 --port 8001"
