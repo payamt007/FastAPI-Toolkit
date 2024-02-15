@@ -19,7 +19,6 @@ tenacity = "^8"
 aiosqlite = "^0.19"
 pytest = "^8"
 httpx = "^0.26"
-requests = "^2"
 
 [tool.poetry.group.lint.dependencies]
 black = "^23"
