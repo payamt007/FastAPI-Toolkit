@@ -24,3 +24,14 @@ services:
     image: redis:7.2
     ports:
       - "6381:6379"
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: celery -A app.celery.celery_app worker --loglevel=info
+    env_file:
+      - .env
+    depends_on:
+      - api
+      - redis
