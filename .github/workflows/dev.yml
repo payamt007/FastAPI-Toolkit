@@ -4,16 +4,46 @@ on:
     branches:
       - develop
 jobs:
-  # Label of the container job
-  container-job:
-    # Containers must run in Linux based operating systems
-    runs-on: ubuntu-22.04
-    # Service containers to run with `container-job`
+  #  # Label of the container job
+  #  container-job:
+  #    # Containers must run in Linux based operating systems
+  #    runs-on: ubuntu-22.04
+  #    # Service containers to run with `container-job`
+  #    services:
+  #      # Label used to access the service container
+  #      pdb:
+  #        # Docker Hub image
+  #        image: postgres
+  #        # Provide the password for postgres
+  #        env:
+  #          POSTGRES_USER: payam
+  #          POSTGRES_PASSWORD: payam
+  #          POSTGRES_DB: foo
+  #        # Set health checks to wait until postgres has started
+  #        options: >-
+  #          --health-cmd pg_isready
+  #          --health-interval 10s
+  #          --health-timeout 5s
+  #          --health-retries 5
+  #    steps:
+  #      - uses: actions/checkout@v4
+
+  ci:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.11" ]
+        poetry-version: [ "1.7.1" ]
+        os: [ ubuntu-22.04 ]
+    runs-on: ${{ matrix.os }}
+
     services:
       # Label used to access the service container
       pdb:
         # Docker Hub image
         image: postgres
+        ports:
+          - 5432:5432
         # Provide the password for postgres
         env:
           POSTGRES_USER: payam
@@ -25,16 +55,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-    steps:
-      - uses: actions/checkout@v4
-  ci:
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: [ "3.11" ]
-        poetry-version: [ "1.7.1" ]
-        os: [ ubuntu-22.04 ]
-    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
