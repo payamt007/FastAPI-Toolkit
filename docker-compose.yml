@@ -29,7 +29,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: celery -A app.celery.celery_app worker --loglevel=info
+    command: celery -A app.celery.celery_app worker --loglevel=info -P eventlet
     env_file:
       - .env
     depends_on:
