@@ -72,10 +72,8 @@ jobs:
       #          chmod +x wait-for-it.sh
       #          ./wait-for-it.sh -h pdb -p 5432 -t 60
       - name: Run Database Migrations
-        uses: er5bus/alembic-python-action@v1
-        with:
-          command: 'upgrade head'
-          #working-directory: './app/to/alembic/config/directory'
+        run: |
+          poetry run alembic upgrade head
         env:
           POSTGRES_HOST: pdb
           POSTGRES_USER: payam
