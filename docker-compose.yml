@@ -33,5 +33,14 @@ services:
     env_file:
       - .env
     depends_on:
-      - api
+      - redis
+
+  beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: celery -A app.celery.celery_app beat --loglevel=info
+    env_file:
+      - .env
+    depends_on:
       - redis

@@ -17,14 +17,9 @@ def debug_task(self) -> None:
     print(f"Request: {self.request!r}")
 
 
-# @celery_app.task
-# def sample_task() -> None:
-#     print(f"Doing some sample task 😄")
-
-
 celery_app.conf.beat_schedule = {
     "scrap_task": {
-        "task": "celery_app.tasks.sample_task",
+        "task": "app.tasks.sample_task",
         "schedule": timedelta(
             seconds=5
         ),
