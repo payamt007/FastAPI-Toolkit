@@ -45,6 +45,7 @@ jobs:
         run: |
           poetry run alembic upgrade head
         env:
+          DB_DRIVER: postgresql+asyncpg://
           POSTGRES_HOST: localhost
           POSTGRES_USER: payam
           POSTGRES_PASSWORD: payam
@@ -52,6 +53,7 @@ jobs:
           DATABASE_URL: postgresql+asyncpg://payam:payam@localhost:5432/foo
       - name: Run the automated tests
         env:
+          DB_DRIVER: postgresql+asyncpg://
           POSTGRES_HOST: localhost
           POSTGRES_USER: payam
           POSTGRES_PASSWORD: payam
