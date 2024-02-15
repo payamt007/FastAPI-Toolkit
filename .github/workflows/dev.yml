@@ -2,7 +2,7 @@ name: CI
 on:
   push:
     branches:
-      - dev
+      - develop
 jobs:
   # Label of the container job
   container-job:
