@@ -66,11 +66,11 @@ jobs:
           poetry-version: ${{ matrix.poetry-version }}
       - name: Install dependencies
         run: poetry install
-      - name: Wait for Database
-        run: |
-          wget -O wait-for-it.sh https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
-          chmod +x wait-for-it.sh
-          ./wait-for-it.sh -h pdb -p 5432 -t 60
+#      - name: Wait for Database
+#        run: |
+#          wget -O wait-for-it.sh https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
+#          chmod +x wait-for-it.sh
+#          ./wait-for-it.sh -h pdb -p 5432 -t 60
       - name: Run Database Migrations
         run: alembic upgrade head
         env:
