@@ -4,30 +4,6 @@ on:
     branches:
       - develop
 jobs:
-  #  # Label of the container job
-  #  container-job:
-  #    # Containers must run in Linux based operating systems
-  #    runs-on: ubuntu-22.04
-  #    # Service containers to run with `container-job`
-  #    services:
-  #      # Label used to access the service container
-  #      pdb:
-  #        # Docker Hub image
-  #        image: postgres
-  #        # Provide the password for postgres
-  #        env:
-  #          POSTGRES_USER: payam
-  #          POSTGRES_PASSWORD: payam
-  #          POSTGRES_DB: foo
-  #        # Set health checks to wait until postgres has started
-  #        options: >-
-  #          --health-cmd pg_isready
-  #          --health-interval 10s
-  #          --health-timeout 5s
-  #          --health-retries 5
-  #    steps:
-  #      - uses: actions/checkout@v4
-
   ci:
     strategy:
       fail-fast: false
@@ -41,10 +17,9 @@ jobs:
       # Label used to access the service container
       pdb:
         # Docker Hub image
-        image: postgres
+        image: postgres:15.4
         ports:
           - 5432:5432
-        # Provide the password for postgres
         env:
           POSTGRES_USER: payam
           POSTGRES_PASSWORD: payam
@@ -66,11 +41,6 @@ jobs:
           poetry-version: ${{ matrix.poetry-version }}
       - name: Install dependencies
         run: poetry install
-      #      - name: Wait for Database
-      #        run: |
-      #          wget -O wait-for-it.sh https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
-      #          chmod +x wait-for-it.sh
-      #          ./wait-for-it.sh -h pdb -p 5432 -t 60
       - name: Run Database Migrations
         run: |
           poetry run alembic upgrade head
@@ -79,6 +49,7 @@ jobs:
           POSTGRES_USER: payam
           POSTGRES_PASSWORD: payam
           POSTGRES_DB: foo
+          DATABASE_URL: postgresql+asyncpg://payam:payam@pdb:5432/foo
       - name: Run the automated tests
         run: |
-          pytest
+          poetry run pytest
