@@ -17,6 +17,8 @@ celery = "^5"
 alembic = "^1"
 tenacity = "^8"
 aiosqlite = "^0.19"
+pytest = "^8"
+httpx ="^0.26"
 
 [tool.poetry.group.lint.dependencies]
 black = "^23"

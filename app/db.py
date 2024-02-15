@@ -12,7 +12,8 @@ user = os.environ.get("POSTGRES_USER")
 password = os.environ.get("POSTGRES_PASSWORD")
 db = os.environ.get("POSTGRES_DB")
 
-DATABASE_URL = f"{db_driver}{user}:{password}@pdb:5432/{db}"
+# DATABASE_URL = f"{db_driver}{user}:{password}@pdb:5432/{db}"
+DATABASE_URL = "sqlite+aiosqlite:///database.db"
 
 engine = create_async_engine(DATABASE_URL, echo=True, future=True)
 
