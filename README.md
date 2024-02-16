@@ -10,7 +10,6 @@ Check out the [post](https://testdriven.io/blog/fastapi-sqlmodel/).
 
 ```sh
 $ docker-compose up -d --build
-$ docker-compose exec web alembic upgrade head
 ```
 
 Sanity check: [http://localhost:8004/ping](http://localhost:8004/ping)
@@ -22,3 +21,9 @@ $ curl -d '{"name":"Midnight Fit", "artist":"Mogwai", "year":"2021"}' -H "Conten
 ```
 
 Get all songs: [http://localhost:8004/songs](http://localhost:8004/songs)
+
+## Want to Run tests?
+
+```sh
+$ docker compose -f docker-compose.yml -f test-docker-compose.yml up --build
+```
