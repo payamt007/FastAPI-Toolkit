@@ -1,10 +1,5 @@
 # FastAPI + SQLModel + Alembic
-
-Sample FastAPI project that uses async SQLAlchemy, SQLModel, Postgres, Alembic, and Docker.
-
-## Want to learn how to build this?
-
-Check out the [post](https://testdriven.io/blog/fastapi-sqlmodel/).
+This project is an opinionated boilerplate for **FastAPI** micro framework that uses async **_SQLAlchemy_**, **_SQLModel_**, **_PostgresSQL_**, _**Alembic**_, **_Celery_**, _**Redis**_ and **_Docker_**. You can use this ready to use sample and don't worry about CI pipelines and running database migrations and tests inside a FastAPI project.
 
 ## Want to use this project?
 
@@ -12,18 +7,17 @@ Check out the [post](https://testdriven.io/blog/fastapi-sqlmodel/).
 $ docker-compose up -d --build
 ```
 
-Sanity check: [http://localhost:8004/ping](http://localhost:8004/ping)
 
 Add a song:
 
 ```sh
-$ curl -d '{"name":"Midnight Fit", "artist":"Mogwai", "year":"2021"}' -H "Content-Type: application/json" -X POST http://localhost:8004/songs
+$ curl -d '{"name":"ALen Fit", "artist":"Helen", "year":"2015"}' -H "Content-Type: application/json" -X POST http://127.0.0.1:8001/songs
 ```
 
-Get all songs: [http://localhost:8004/songs](http://localhost:8004/songs)
+Get all songs: [http://127.0.0.1:8001/songs](http://localhost:8004/songs)
 
 ## Want to Run tests?
 
 ```sh
-$ docker compose -f docker-compose.yml -f test-docker-compose.yml up --build
+$ docker compose exec api pytest
 ```
