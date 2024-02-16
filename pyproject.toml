@@ -20,6 +20,7 @@ aiosqlite = "^0.19"
 pytest = "^8"
 httpx = "^0.26"
 eventlet = "^0.35"
+pre-commit = "^3"
 
 [tool.poetry.group.lint.dependencies]
 black = "^23"
