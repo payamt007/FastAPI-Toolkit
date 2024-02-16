@@ -1,6 +1,5 @@
 # FastAPI + SQLModel + Alembic
-This project is a opinionated boilerplate for FastAPI micro framework that uses async SQLAlchemy, SQLModel, PostgresSQL, Alembic, and Docker. You can use this ready to use sample and don't worry abuot CI pipelines and running database migrations and tests inside a FastAPI project.
-
+This project is an opinionated boilerplate for **FastAPI** micro framework that uses async **_SQLAlchemy_**, **_SQLModel_**, **_PostgresSQL_**, _**Alembic**_, **_Celery_**, _**Redis**_ and **_Docker_**. You can use this ready to use sample and don't worry about CI pipelines and running database migrations and tests inside a FastAPI project.
 
 ## Want to use this project?
 
