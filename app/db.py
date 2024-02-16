@@ -7,14 +7,8 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 from sqlmodel import SQLModel, create_engine
 
-db_driver = os.environ.get("DB_DRIVER")
-user = os.environ.get("POSTGRES_USER")
-password = os.environ.get("POSTGRES_PASSWORD")
-db = os.environ.get("POSTGRES_DB")
-db_host = os.environ.get("POSTGRES_HOST")
-
-DATABASE_URL = f"{db_driver}{user}:{password}@{db_host}:5432/{db}"
 # DATABASE_URL = "sqlite+aiosqlite:///database.db"
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
 engine = create_async_engine(DATABASE_URL, echo=True, future=True)
 
