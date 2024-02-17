@@ -1,4 +1,7 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends
+from fastapi.security import OAuth2PasswordBearer
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -7,12 +10,15 @@ from .models import Song, SongCreate
 
 router = APIRouter()
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 
 @router.get("/songs", response_model=list[Song])
-async def get_songs(session: AsyncSession = Depends(get_session)):
+async def get_songs(token: Annotated[str, Depends(oauth2_scheme)], session: AsyncSession = Depends(get_session)):
     result = await session.execute(select(Song))
     songs = result.scalars().all()
-    return [Song(name=song.name, artist=song.artist, year=song.year, id=song.id, description=song.description) for song in songs]
+    return [Song(name=song.name, artist=song.artist, year=song.year, id=song.id, description=song.description) for song
+            in songs]
 
 
 @router.post("/songs")
