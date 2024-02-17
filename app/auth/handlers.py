@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from sqlmodel import Session, SQLModel, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from ..db import engine_sync, get_session
+from ..db import engine
 from .models import BaseUser, User
 
 # to get a string like this run:
@@ -42,8 +42,8 @@ def get_password_hash(password: str):
 
 
 def get_user(username: str):
-    with Session(engine_sync) as session:
-        SQLModel.metadata.create_all(engine_sync)
+    with Session(engine) as session:
+        # SQLModel.metadata.create_all(engine)
         result = session.exec(select(User).where(User.username == username))
         user = result.first()
         return user
@@ -122,13 +122,13 @@ async def get_current_active_user(
     return current_user
 
 
-@router.post("/user", response_model=User)
-async def register_user(user: BaseUser,
-                        session: AsyncSession = Depends(get_session),
-                        ):
-    song = User(username=user.username, full_name=user.full_name, email=user.email,
-                password=get_password_hash(user.password))
-    session.add(song)
-    await session.commit()
-    await session.refresh(song)
-    return song
+# @router.post("/user", response_model=User)
+# async def register_user(user: BaseUser,
+#                         session: AsyncSession = Depends(get_session),
+#                         ):
+#     song = User(username=user.username, full_name=user.full_name, email=user.email,
+#                 password=get_password_hash(user.password))
+#     session.add(song)
+#     await session.commit()
+#     await session.refresh(song)
+#     return song
