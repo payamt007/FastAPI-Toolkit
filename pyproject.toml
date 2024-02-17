@@ -22,6 +22,9 @@ httpx = "^0.26"
 eventlet = "^0.35"
 pre-commit = "^3"
 python-multipart = "0.0.9"
+python-jose = { version = "^3", extras = ["cryptography"] }
+passlib = { version = "^1", extras = ["bcrypt"] }
+
 
 [tool.poetry.group.lint.dependencies]
 black = "^23"

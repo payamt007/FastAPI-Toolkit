@@ -5,10 +5,12 @@ from sqlalchemy.orm import sessionmaker
 from sqlmodel import SQLModel, create_engine
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-# DATABASE_URL = "sqlite+aiosqlite:///database.db"
-DATABASE_URL = os.environ.get("DATABASE_URL")
+DATABASE_URL = "sqlite+aiosqlite:///database.db"
+# DATABASE_URL = os.environ.get("DATABASE_URL")
 
 engine = create_async_engine(DATABASE_URL, echo=True, future=True)
+
+engine_sync = create_engine("sqlite:///database.db", echo=True)
 
 
 async def init_db():
