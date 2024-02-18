@@ -40,7 +40,7 @@ def get_password_hash(password: str):
     return pwd_context.hash(password)
 
 
-def get_user(username: str):
+def get_user(username: str | None):
     with Session(engine) as session:
         # SQLModel.metadata.create_all(engine)
         result = session.exec(select(User).where(User.username == username))
@@ -76,7 +76,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
+        username = payload.get("sub")
         if username is None:
             raise credentials_exception
         token_data = TokenData(username=username)
@@ -113,7 +113,7 @@ async def login_for_access_token(
 
 
 @router.get("/user", response_model=User)
-async def get_current_active_user(
+async def get_current_active_user_from_token(
     current_user: Annotated[User, Depends(get_current_active_user)],
 ):
     return current_user

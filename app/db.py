@@ -3,7 +3,7 @@ import os
 from sqlmodel import create_engine
 
 # DATABASE_URL = "sqlite+aiosqlite:///database.db"
-DATABASE_URL = os.environ.get("DATABASE_URL")
+DATABASE_URL = os.environ.get("DATABASE_URL") or "sqlite:///database.db"
 
 # engine = create_async_engine(DATABASE_URL, echo=True, future=True)
 engine = create_engine(DATABASE_URL, echo=True)

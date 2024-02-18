@@ -40,6 +40,11 @@ mkdocs = "^1"
 mkdocs-material = "^9"
 mkdocstrings-python = "^1"
 
+[tool.poetry.group.mypy.dependencies]
+types-python-jose = "^3"
+types-passlib = "^1"
+celery-stubs = "^0.1"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
@@ -49,3 +54,8 @@ fix = true
 line-length = 120
 builtins = ["_"]
 exclude = [".venv"]
+
+
+[tool.mypy]
+python_version = 3.11
+exclude = ['./venv/']

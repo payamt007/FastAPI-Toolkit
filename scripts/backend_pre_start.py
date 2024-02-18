@@ -1,6 +1,6 @@
 import logging
 
-from sqlalchemy import MetaData
+from sqlalchemy import MetaData, create_engine
 from sqlmodel import Session, SQLModel, select
 from tenacity import (
     after_log,
@@ -9,8 +9,12 @@ from tenacity import (
     stop_after_attempt,
     wait_fixed,
 )
+import os
 
-from app.db import engine
+DATABASE_URL = os.environ.get("DATABASE_URL") or "sqlite:///database.db"
+engine = create_engine(DATABASE_URL, echo=True)
+
+# from app.db import engine
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

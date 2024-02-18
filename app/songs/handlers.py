@@ -35,13 +35,13 @@ async def get_songs(
 @router.post("/songs")
 async def add_song(song: SongCreate):
     with Session(engine) as session:
-        song = Song(
+        new_song = Song(
             name=song.name,
             artist=song.artist,
             year=song.year,
             description=song.description,
         )
-        session.add(song)
+        session.add(new_song)
         session.commit()
-        session.refresh(song)
-        return song
+        session.refresh(new_song)
+        return new_song
