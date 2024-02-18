@@ -2,8 +2,13 @@ import logging
 
 from sqlalchemy import MetaData
 from sqlmodel import Session, SQLModel, select
-from tenacity import (after_log, before_log, retry, stop_after_attempt,
-                      wait_fixed)
+from tenacity import (
+    after_log,
+    before_log,
+    retry,
+    stop_after_attempt,
+    wait_fixed,
+)
 
 from app.db import engine
 
@@ -26,7 +31,7 @@ def init() -> None:
     try:
         with Session(engine) as session:
             SQLModel.metadata.create_all(engine)
-            result = session.exec(select(1))
+            session.exec(select(1))
     except Exception as e:
         print(e)
         logger.error(e)

@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI
+from fastapi import FastAPI
 
 from .auth.handlers import router as auth_router
 from .songs.handlers import router as song_router

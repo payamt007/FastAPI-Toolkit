@@ -28,9 +28,9 @@ passlib = { version = "^1", extras = ["bcrypt"] }
 
 
 [tool.poetry.group.lint.dependencies]
+ruff = "^0.2"
 black = "^23"
 flake8 = "^6"
-celery-stubs = "^0.1"
 isort = "^5"
 mypy = "^1"
 
@@ -43,3 +43,9 @@ mkdocstrings-python = "^1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+fix = true
+line-length = 120
+builtins = ["_"]
+exclude = [".venv"]

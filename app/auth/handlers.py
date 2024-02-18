@@ -89,7 +89,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
 
 
 async def get_current_active_user(
-        current_user: Annotated[User, Depends(get_current_user)]
+    current_user: Annotated[User, Depends(get_current_user)],
 ):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
@@ -98,7 +98,7 @@ async def get_current_active_user(
 
 @router.post("/token")
 async def login_for_access_token(
-        form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Token:
     user = authenticate_user(form_data.username, form_data.password)
     if not user:
@@ -108,15 +108,13 @@ async def login_for_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
-    )
+    access_token = create_access_token(data={"sub": user.username}, expires_delta=access_token_expires)
     return Token(access_token=access_token, token_type="bearer")
 
 
 @router.get("/user", response_model=User)
 async def get_current_active_user(
-        current_user: Annotated[User, Depends(get_current_active_user)]
+    current_user: Annotated[User, Depends(get_current_active_user)],
 ):
     return current_user
 
@@ -124,8 +122,12 @@ async def get_current_active_user(
 @router.post("/user", response_model=BaseUser)
 async def register_user(user: BaseUser):
     with Session(engine) as session:
-        song = User(username=user.username, full_name=user.full_name, email=user.email,
-                    password=get_password_hash(user.password))
+        song = User(
+            username=user.username,
+            full_name=user.full_name,
+            email=user.email,
+            password=get_password_hash(user.password),
+        )
         session.add(song)
         session.commit()
         session.refresh(song)
