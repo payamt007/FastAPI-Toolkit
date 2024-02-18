@@ -6,8 +6,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
-from sqlmodel import Session, SQLModel, select
-from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlmodel import Session, select
 
 from ..db import engine
 from .models import BaseUser, User
@@ -122,13 +121,12 @@ async def get_current_active_user(
     return current_user
 
 
-# @router.post("/user", response_model=User)
-# async def register_user(user: BaseUser,
-#                         session: AsyncSession = Depends(get_session),
-#                         ):
-#     song = User(username=user.username, full_name=user.full_name, email=user.email,
-#                 password=get_password_hash(user.password))
-#     session.add(song)
-#     await session.commit()
-#     await session.refresh(song)
-#     return song
+@router.post("/user", response_model=BaseUser)
+async def register_user(user: BaseUser):
+    with Session(engine) as session:
+        song = User(username=user.username, full_name=user.full_name, email=user.email,
+                    password=get_password_hash(user.password))
+        session.add(song)
+        session.commit()
+        session.refresh(song)
+        return song
