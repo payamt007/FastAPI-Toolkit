@@ -11,7 +11,6 @@ python = "^3.11"
 fastapi = "^0.109"
 uvicorn = "^0.27"
 sqlmodel = "0.0.14"
-#asyncpg = "^0.29"
 psycopg2-binary = "^2"
 redis = "^4"
 celery = "^5"
@@ -25,6 +24,10 @@ pre-commit = "^3"
 python-multipart = "0.0.9"
 python-jose = { version = "^3", extras = ["cryptography"] }
 passlib = { version = "^1", extras = ["bcrypt"] }
+
+
+[tool.poetry.group.dev.dependencies]
+commitizen = "^3"
 
 
 [tool.poetry.group.lint.dependencies]
@@ -56,3 +59,14 @@ target-version = "py311"
 [tool.mypy]
 python_version = 3.11
 exclude = ['./venv/', 'app/songs/models.py']
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.0.1"
+tag_format = "v$version"
+version_files = [
+    "README.md",
+    "pyproject.toml:version",
+    "app/__init__.py:__version__",
+]
+major_version_zero = true
