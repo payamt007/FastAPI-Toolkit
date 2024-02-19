@@ -11,7 +11,7 @@ python = "^3.11"
 fastapi = "^0.109"
 uvicorn = "^0.27"
 sqlmodel = "0.0.14"
-asyncpg = "^0.29"
+psycopg2-binary = "^2"
 redis = "^4"
 celery = "^5"
 alembic = "^1"
@@ -21,12 +21,17 @@ pytest = "^8"
 httpx = "^0.26"
 eventlet = "^0.35"
 pre-commit = "^3"
+python-multipart = "0.0.9"
+python-jose = { version = "^3", extras = ["cryptography"] }
+passlib = { version = "^1", extras = ["bcrypt"] }
+
+
+[tool.poetry.group.dev.dependencies]
+commitizen = "^3"
+
 
 [tool.poetry.group.lint.dependencies]
-black = "^23"
-flake8 = "^6"
-celery-stubs = "^0.1"
-isort = "^5"
+ruff = "^0.2"
 mypy = "^1"
 
 [tool.poetry.group.doc.dependencies]
@@ -35,6 +40,33 @@ mkdocs = "^1"
 mkdocs-material = "^9"
 mkdocstrings-python = "^1"
 
+[tool.poetry.group.mypy.dependencies]
+types-python-jose = "^3"
+types-passlib = "^1"
+celery-stubs = "^0.1"
+
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+fix = true
+indent-width = 4
+line-length = 88
+target-version = "py311"
+
+[tool.mypy]
+python_version = 3.11
+exclude = ['./venv/', 'app/songs/models.py']
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.1.0"
+tag_format = "v$version"
+version_files = [
+    "README.md",
+    "pyproject.toml:version",
+    "app/__init__.py:__version__",
+]
+major_version_zero = true

@@ -1,6 +1,5 @@
 # pull official base image
 FROM docker.mofid.dev/tiangolo/uvicorn-gunicorn-fastapi:python3.11
-#FROM docker.mofid.dev/python:3.11-slim
 
 # set working directory
 WORKDIR /app/

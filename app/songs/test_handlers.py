@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from fastapi.testclient import TestClient
 
 from ..main import app
@@ -8,9 +10,7 @@ client = TestClient(app)
 def test_add_song():
     response = client.post(
         "/songs",
-        json={"name": "Alen",
-              "artist": "test",
-              "year": 1960},
+        json={"name": "Alen", "artist": "test", "year": 1960},
     )
     assert response.status_code == 200, response.text
     data = response.json()

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 from datetime import timedelta
 
@@ -7,7 +9,7 @@ celery_app = Celery(
     __name__,
     broker=os.environ.get("REDIS_URL") or "redis://localhost:6380",
     backend=os.environ.get("REDIS_URL") or "redis://localhost:6380",
-    include=['app.tasks']
+    include=["app.tasks"],
 )
 celery_app.autodiscover_tasks()
 
@@ -20,8 +22,6 @@ def debug_task(self) -> None:
 celery_app.conf.beat_schedule = {
     "scrap_task": {
         "task": "app.tasks.sample_task",
-        "schedule": timedelta(
-            seconds=5
-        ),
+        "schedule": timedelta(seconds=5),
     },
 }

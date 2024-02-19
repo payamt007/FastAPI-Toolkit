@@ -1,12 +1,22 @@
-import asyncio
+from __future__ import annotations
+
 import logging
+import os
 
-from sqlalchemy import MetaData
-from sqlmodel import Session, select
-from tenacity import (after_log, before_log, retry, stop_after_attempt,
-                      wait_fixed)
+from sqlalchemy import MetaData, create_engine
+from sqlmodel import Session, SQLModel, select
+from tenacity import (
+    after_log,
+    before_log,
+    retry,
+    stop_after_attempt,
+    wait_fixed,
+)
 
-from app.db import engine
+DATABASE_URL = os.environ.get("DATABASE_URL") or "sqlite:///database.db"
+engine = create_engine(DATABASE_URL, echo=True)
+
+# from app.db import engine
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -23,23 +33,23 @@ meta = MetaData()
     before=before_log(logger, logging.INFO),
     after=after_log(logger, logging.WARN),
 )
-async def init() -> None:
+def init() -> None:
     try:
-        async with engine.begin() as conn:
-            await conn.run_sync(meta.create_all)
-            # Try to create session to check if DB is awake
-            await conn.execute(select(1))
+        with Session(engine) as session:
+            SQLModel.metadata.create_all(engine)
+            session.exec(select(1))
     except Exception as e:
         print(e)
         logger.error(e)
         raise e
 
 
-async def main() -> None:
+def main() -> None:
     logger.info("Initializing service")
-    await init()
+    init()
     logger.info("Service finished initializing")
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
+# asyncio.run(main())
