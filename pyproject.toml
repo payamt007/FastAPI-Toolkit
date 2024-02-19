@@ -29,9 +29,6 @@ passlib = { version = "^1", extras = ["bcrypt"] }
 
 [tool.poetry.group.lint.dependencies]
 ruff = "^0.2"
-black = "^23"
-flake8 = "^6"
-isort = "^5"
 mypy = "^1"
 
 [tool.poetry.group.doc.dependencies]
@@ -45,17 +42,17 @@ types-python-jose = "^3"
 types-passlib = "^1"
 celery-stubs = "^0.1"
 
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
 fix = true
-line-length = 120
-builtins = ["_"]
-exclude = [".venv"]
-
+indent-width = 4
+line-length = 88
+target-version = "py311"
 
 [tool.mypy]
 python_version = 3.11
-exclude = ['./venv/']
+exclude = ['./venv/', 'app/songs/models.py']

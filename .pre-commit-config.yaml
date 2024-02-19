@@ -5,7 +5,8 @@ repos:
       - id: ruff
         args: [ --fix ]
       - id: ruff-format
-#  - repo: https://github.com/pycqa/isort
-#    rev: 5.13.2
+#  - repo: https://github.com/pre-commit/mirrors-mypy
+#    rev: v1.8.0
 #    hooks:
-#      - id: isort
+#      - id: mypy
+#        exclude: 'app/songs/models.py'

@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import logging
+import os
 
 from sqlalchemy import MetaData, create_engine
 from sqlmodel import Session, SQLModel, select
@@ -9,7 +12,6 @@ from tenacity import (
     stop_after_attempt,
     wait_fixed,
 )
-import os
 
 DATABASE_URL = os.environ.get("DATABASE_URL") or "sqlite:///database.db"
 engine = create_engine(DATABASE_URL, echo=True)

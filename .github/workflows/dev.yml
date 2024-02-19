@@ -2,8 +2,18 @@ name: CI
 on:
   push:
     branches:
-      - main
+      - dev
 jobs:
+  pri-commit:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+      - uses: pre-commit/action@v3.0.1
+      - uses: pre-commit-ci/lite-action@v1.0.2
+        if: always()
   ci:
     strategy:
       fail-fast: false
