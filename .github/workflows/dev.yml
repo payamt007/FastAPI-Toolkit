@@ -2,7 +2,7 @@ name: CI
 on:
   push:
     branches:
-      - develop
+      - main
 jobs:
   pri-commit:
     runs-on: ubuntu-22.04
