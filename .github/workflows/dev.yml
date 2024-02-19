@@ -55,9 +55,9 @@ jobs:
         run: |
           poetry run alembic upgrade head
         env:
-          DATABASE_URL: postgresql+asyncpg://payam:payam@localhost:5432/foo
+          DATABASE_URL: postgresql://payam:payam@localhost:5432/foo
       - name: Run the automated tests
         env:
-          DATABASE_URL: postgresql+asyncpg://payam:payam@localhost:5432/foo
+          DATABASE_URL: postgresql://payam:payam@localhost:5432/foo
         run: |
           poetry run pytest
