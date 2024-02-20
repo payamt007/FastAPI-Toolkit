@@ -1,11 +1,11 @@
-from __future__ import annotations
-
 import os
 from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 from sqlmodel import SQLModel  # NEW
+from app.auth.models import User
+from app.songs.models import Song
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -14,6 +14,7 @@ config.set_main_option(
     "sqlalchemy.url", os.environ.get("DATABASE_URL") or "sqlite:///database.db"
 )  # NEW
 # config.set_main_option('sqlalchemy.url', "sqlite:///database.db")  # NEW
+
 
 # sqlite+aiosqlite:///database.db
 # Interpret the config file for Python logging.

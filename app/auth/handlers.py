@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
@@ -82,8 +80,8 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         if username is None:
             raise credentials_exception
         token_data = TokenData(username=username)
-    except JWTError:
-        raise credentials_exception
+    except JWTError as err:
+        raise credentials_exception from err
     user = get_user(username=token_data.username)
     if user is None:
         raise credentials_exception
@@ -123,16 +121,20 @@ async def get_current_active_user_from_token(
     return current_user
 
 
-@router.post("/user", response_model=BaseUser)
+@router.post("/user")
 async def register_user(user: BaseUser):
     with Session(engine) as session:
-        song = User(
+        new_user = User(
             username=user.username,
             full_name=user.full_name,
             email=user.email,
             password=get_password_hash(user.password),
         )
-        session.add(song)
+        session.add(new_user)
         session.commit()
-        session.refresh(song)
-        return song
+        session.refresh(new_user)
+        return {
+            "username": user.username,
+            "full_name": user.full_name,
+            "email": user.email,
+        }
