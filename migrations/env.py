@@ -4,8 +4,8 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 from sqlmodel import SQLModel  # NEW
-from app.auth.models import User
-from app.songs.models import Song
+from app.auth.models import User # NEW
+from app.songs.models import Song, Tag, SongTag # NEW
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

@@ -24,6 +24,10 @@ python-multipart = "0.0.9"
 python-jose = { version = "^3", extras = ["cryptography"] }
 passlib = { version = "^1", extras = ["bcrypt"] }
 websockets = "^12"
+coverage = "^7"
+motor = "^3"
+pymongo = "^4"
+Jinja2 = "^3"
 
 [tool.poetry.group.dev.dependencies]
 commitizen = "^3"

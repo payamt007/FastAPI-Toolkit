@@ -1,11 +1,4 @@
-from fastapi.testclient import TestClient
-
-from ..main import app
-
-client = TestClient(app)
-
-
-def test_add_song():
+def test_add_song(client):
     response = client.post(
         "/songs",
         json={"name": "Alen", "artist": "test", "year": 1960},

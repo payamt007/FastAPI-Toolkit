@@ -4,11 +4,13 @@ services:
   api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile2
     ports:
       - "8001:8001"
     env_file:
       - .env
+    volumes:
+      - static_volume:/app/app/static
     depends_on:
       - pdb
   pdb:
@@ -26,7 +28,7 @@ services:
   worker:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile2
     command: celery -A app.celery.celery_app worker --loglevel=info
     env_file:
       - .env
@@ -35,7 +37,7 @@ services:
   beat:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile2
     command: celery -A app.celery.celery_app beat --loglevel=info
     env_file:
       - .env
@@ -48,5 +50,23 @@ services:
       - "5557:5555"
     depends_on:
       - redis
+  mongo:
+    image: docker.mofid.dev/mongo:7.0.5
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+  nginx:
+    build: ./nginx
+    volumes:
+      - static_volume:/app/app/static
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
 volumes:
+  static_volume:
   postgres_data:
+  mongodb-data:
