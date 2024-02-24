@@ -17,8 +17,9 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 @router.get("/songs", response_model=list[SongRead])
 async def get_songs(
-        current_user: Annotated[User, Depends(get_current_active_user)],
-        session: Session = Depends(get_session)):
+    current_user: Annotated[User, Depends(get_current_active_user)],
+    session: Session = Depends(get_session),
+):
     songs = session.exec(select(Song)).all()
     return songs
     # songs = session.exec(select(Song, City.title).join(City, isouter=True)).all()
@@ -58,7 +59,9 @@ def create_city(*, session: Session = Depends(get_session), city: CityCreate):
 
 
 @router.post("/connect_city_with_song", response_model=Song)
-def connect_city_with_song(city_title: str, song_title: str, session: Session = Depends(get_session)):
+def connect_city_with_song(
+    city_title: str, song_title: str, session: Session = Depends(get_session)
+):
     city_in_db = session.exec(select(City).where(City.title == city_title)).first()
     song = session.exec(select(Song).where(Song.name.like(f"%{song_title}%"))).first()
     song.city = city_in_db
@@ -78,9 +81,15 @@ def create_tag(*, session: Session = Depends(get_session), tag: TagCreate):
 
 
 @router.post("/attach-tags")
-def attach_tag_to_song(tag_title: str, song_name: str, session: Session = Depends(get_session)):
-    tag_in_db = session.exec(select(Tag).where(Tag.title.like(f"%{tag_title}%"))).first()
-    song_in_db = session.exec(select(Song).where(Song.name.like(f"%{song_name}%"))).first()
+def attach_tag_to_song(
+    tag_title: str, song_name: str, session: Session = Depends(get_session)
+):
+    tag_in_db = session.exec(
+        select(Tag).where(Tag.title.like(f"%{tag_title}%"))
+    ).first()
+    song_in_db = session.exec(
+        select(Song).where(Song.name.like(f"%{song_name}%"))
+    ).first()
     song_in_db.tags.append(tag_in_db)
     session.add(song_in_db)
     session.commit()

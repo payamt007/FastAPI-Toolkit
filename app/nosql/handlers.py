@@ -1,12 +1,10 @@
-from fastapi import APIRouter
-
-from fastapi import Body, HTTPException, status
-from fastapi.responses import Response
-
 from bson import ObjectId
+from fastapi import APIRouter, Body, HTTPException, status
+from fastapi.responses import Response
 from pymongo import ReturnDocument
-from .models import StudentModel, StudentCollection, UpdateStudentModel
+
 from ..mongo import client
+from .models import StudentCollection, StudentModel, UpdateStudentModel
 
 db = client.college
 
@@ -63,7 +61,7 @@ async def show_student(id: str):
     Get the record for a specific student, looked up by `id`.
     """
     if (
-            student := await student_collection.find_one({"_id": ObjectId(id)})
+        student := await student_collection.find_one({"_id": ObjectId(id)})
     ) is not None:
         return student
 

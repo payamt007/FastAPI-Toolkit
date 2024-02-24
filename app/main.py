@@ -1,13 +1,13 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 
 from .auth.handlers import router as auth_router
 from .files.handlers import router as files_router
 from .live_socket.handlers import router as ws_router
-from .songs.handlers import router as song_router
 from .nosql.handlers import router as nosql_router
+from .songs.handlers import router as song_router
 
 app = FastAPI()
 

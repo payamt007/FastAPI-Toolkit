@@ -1,4 +1,5 @@
 import os
+
 import redis
 
 host = os.environ.get("REDIS_HOST") or "127.0.0.1"

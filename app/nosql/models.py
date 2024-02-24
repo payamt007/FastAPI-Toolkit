@@ -1,11 +1,8 @@
-from typing import Optional, List
-
-from pydantic import ConfigDict, BaseModel, Field
-from pydantic.functional_validators import BeforeValidator
-
-from typing_extensions import Annotated
+from typing import Annotated
 
 from bson import ObjectId
+from pydantic import BaseModel, ConfigDict, Field
+from pydantic.functional_validators import BeforeValidator
 
 PyObjectId = Annotated[str, BeforeValidator(str)]
 
@@ -18,7 +15,7 @@ class StudentModel(BaseModel):
     # The primary key for the StudentModel, stored as a `str` on the instance.
     # This will be aliased to `_id` when sent to MongoDB,
     # but provided as `id` in the API requests and responses.
-    id: Optional[PyObjectId] = Field(alias="_id", default=None)
+    id: PyObjectId | None = Field(alias="_id", default=None)
     name: str = Field(...)
     email: str = Field(...)
     course: str = Field(...)
@@ -42,10 +39,10 @@ class UpdateStudentModel(BaseModel):
     A set of optional updates to be made to a document in the database.
     """
 
-    name: Optional[str] = None
-    email: Optional[str] = None
-    course: Optional[str] = None
-    gpa: Optional[float] = None
+    name: str | None = None
+    email: str | None = None
+    course: str | None = None
+    gpa: float | None = None
     model_config = ConfigDict(
         arbitrary_types_allowed=True,
         json_encoders={ObjectId: str},
@@ -67,4 +64,4 @@ class StudentCollection(BaseModel):
     [vulnerability](https://haacked.com/archive/2009/06/25/json-hijacking.aspx/)
     """
 
-    students: List[StudentModel]
+    students: list[StudentModel]

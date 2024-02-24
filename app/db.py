@@ -1,6 +1,6 @@
 import os
 
-from sqlmodel import create_engine, Session
+from sqlmodel import Session, create_engine
 
 # DATABASE_URL = "sqlite+aiosqlite:///database.db"
 DATABASE_URL = os.environ.get("DATABASE_URL") or "sqlite:///database.db"
