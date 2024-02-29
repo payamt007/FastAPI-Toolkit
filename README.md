@@ -1,7 +1,7 @@
-# FastAPI + SQLModel + Alembic
+# FastAPI + SQLModel + Alembic + Celry + MongoDB + Redis + jwt Auth
 
 This project is an opinionated boilerplate for **FastAPI** micro framework that uses  **_SQLAlchemy_**, 
-_**SQLModel**_, **_PostgresSQL_**, _**Alembic**_, **_Celery_**, _**Redis**_ and **_Docker_**. You can use this ready to
+_**SQLModel**_, **_PostgresSQL_**, _**Alembic**_, **_Celery_**, **_MongoDB_**, _**Redis**_, **_Docker_** and **_jwt Authentication_**. You can use this ready to
 use sample and don't worry about CI pipelines and running database migrations and tests inside a FastAPI project.
 
 ## Add new revision for database :
