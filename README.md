@@ -26,7 +26,7 @@ $ docker-compose up -d --build
 ### Add a song:
 
 ```sh
-$ curl -d '{"name":"ALen Fit", "artist":"Helen", "year":"2015"}' -H "Content-Type: application/json" -X POST http://127.0.4.1:8001/songs
+$ curl -d '{"name":"ALen Fit", "artist":"Helen", "year":"2015"}' -H "Content-Type: application/json" -X POST http://127.0.0.1:8001/songs
 ```
 
 ### Get all songs:
