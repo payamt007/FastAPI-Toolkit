@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "backend"
+name = "fastapi-toolkit"
 version = "0.3.0"
 description = "A Sample FastAPI app"
 authors = ["Payam Taheri"]
@@ -36,12 +36,6 @@ commitizen = "^3"
 [tool.poetry.group.lint.dependencies]
 ruff = "^0.2"
 mypy = "^1"
-
-[tool.poetry.group.doc.dependencies]
-mkdocstrings = "^0.22"
-mkdocs = "^1"
-mkdocs-material = "^9"
-mkdocstrings-python = "^1"
 
 [tool.poetry.group.mypy.dependencies]
 types-python-jose = "^3"
