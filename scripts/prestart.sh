@@ -7,4 +7,4 @@ python /app/scripts/backend_pre_start.py
 alembic upgrade head
 
 # Create initial data in DB
-# python /app/app/initial_data.py
+python /app/scripts/insert_admin_user.py
