@@ -21,52 +21,52 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-  redis:
-    image: redis:7.2
-    ports:
-      - "6379:6379"
-  worker:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    command: celery -A app.celery.celery_app worker --loglevel=info
-    env_file:
-      - .env
-    depends_on:
-      - redis
-  beat:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    command: celery -A app.celery.celery_app beat --loglevel=info
-    env_file:
-      - .env
-    depends_on:
-      - redis
-  flower:
-    image: mher/flower:0.9.7
-    command: [ 'flower', '--broker=redis://redis:6379', '--port=5555' ]
-    ports:
-      - "5557:5555"
-    depends_on:
-      - redis
-  mongo:
-    image: mongo:7.0.5
-    restart: always
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodb-data:/data/db
-  nginx:
-    build: ./nginx
-    volumes:
-      - static_volume:/app/app/static
-    ports:
-      - "8080:80"
-    depends_on:
-      - api
+#  redis:
+#    image: redis:7.2
+#    ports:
+#      - "6379:6379"
+#  worker:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    command: celery -A app.celery.celery_app worker --loglevel=info
+#    env_file:
+#      - .env
+#    depends_on:
+#      - redis
+#  beat:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    command: celery -A app.celery.celery_app beat --loglevel=info
+#    env_file:
+#      - .env
+#    depends_on:
+#      - redis
+#  flower:
+#    image: mher/flower:0.9.7
+#    command: [ 'flower', '--broker=redis://redis:6379', '--port=5555' ]
+#    ports:
+#      - "5557:5555"
+#    depends_on:
+#      - redis
+#  mongo:
+#    image: mongo:7.0.5
+#    restart: always
+#    ports:
+#      - "27017:27017"
+#    volumes:
+#      - mongodb-data:/data/db
+#  nginx:
+#    build: ./nginx
+#    volumes:
+#      - static_volume:/app/app/static
+#    ports:
+#      - "8080:80"
+#    depends_on:
+#      - api
 
 volumes:
   static_volume:
   postgres_data:
-  mongodb-data:
+#  mongodb-data:
