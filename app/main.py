@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-from .auth.handlers import router as auth_router
+from .auth.handlers_scopes import router as auth_router
 from .files.handlers import router as files_router
 from .live_socket.handlers import router as ws_router
 from .nosql.handlers import router as nosql_router
