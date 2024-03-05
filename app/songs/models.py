@@ -72,3 +72,4 @@ class City(CityCreate, table=True):
     id: int = Field(default=None, nullable=False, primary_key=True)
 
     songs: list["Song"] = Relationship(back_populates="city")
+
