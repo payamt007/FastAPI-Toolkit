@@ -10,7 +10,6 @@ from fastapi.security import (
     SecurityScopes,
 )
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 from pydantic import BaseModel, ValidationError
 from sqlmodel import Session, select
 
@@ -29,7 +28,6 @@ oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl="token",
     scopes={"me": "Read information about the current user.", "items": "Read items."},
 )
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 class Token(BaseModel):
@@ -44,7 +42,6 @@ class TokenData(BaseModel):
 
 def verify_password(plain_password, hashed_password):
     return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password)
-
 
 
 def get_password_hash(password: str):
