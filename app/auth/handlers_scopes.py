@@ -16,7 +16,7 @@ from sqlmodel import Session, select
 
 from ..db import engine, get_db_session
 from .models import User
-from .schema import UserCreate
+from .schema import UserCreate, UserRead
 
 # to get a string like this run:
 # openssl rand -hex 32
@@ -140,15 +140,16 @@ async def login_for_access_token(
     return Token(access_token=access_token, token_type="bearer")
 
 
-# @router.get("/user", response_model=User)
-# async def get_current_active_user_from_token(
-#         current_user: Annotated[User, Depends(get_current_active_user)],
-# ):
-#     return current_user
+@router.get("/user", response_model=UserRead)
+async def get_current_active_user_from_token(
+        current_user: Annotated[User, Depends(get_current_active_user)],
+):
+    return current_user
 
 
-@router.post("/user")
-async def register_user(user: UserCreate, session: AsyncSession = Depends(get_db_session)):
+@router.post("/user", response_model=UserRead)
+async def register_user(user: UserCreate, session: AsyncSession = Depends(get_db_session),
+                        ):
     new_user = User(
         username=user.username,
         full_name=user.full_name,
@@ -158,8 +159,4 @@ async def register_user(user: UserCreate, session: AsyncSession = Depends(get_db
     session.add(new_user)
     await session.commit()
     await session.refresh(new_user)
-    return {
-        "username": user.username,
-        "full_name": user.full_name,
-        "email": user.email,
-    }
+    return new_user
