@@ -1,75 +1,41 @@
-from typing import Optional
+from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from pydantic import field_validator
-from sqlmodel import Field, Relationship, SQLModel
-
-
-class SongTag(SQLModel, table=True):
-    song_id: int | None = Field(default=None, foreign_key="song.id", primary_key=True)
-    tag_id: int | None = Field(default=None, foreign_key="tag.id", primary_key=True)
+from ..db import Base
 
 
-class SongBase(SQLModel):
-    name: str
-    artist: str
-    description: str | None = None
-    year: int | None = None
-    city_id: int | None = Field(default=None, foreign_key="city.id")
+class SongTag(Base):
+    __tablename__ = "song_tag"
 
-    @field_validator("year")
-    @classmethod
-    def validate_year(cls, value):
-        if value is not None and value < 1900:
-            raise ValueError("Year must be 1900 or later")
-        return value
-
-    @field_validator("description")
-    @classmethod
-    def validate_description(cls, value):
-        if value is not None and len(value) < 5:
-            raise ValueError("Description must be at least 5 characters long")
-        return value
+    song_id: Mapped[int] = mapped_column(ForeignKey("songs.id"), primary_key=True)
+    tag_id: Mapped[int] = mapped_column(ForeignKey("tags.id"), primary_key=True)
 
 
-class SongCreate(SongBase):
-    pass
+class Song(Base):
+    __tablename__ = "songs"
+
+    id: Mapped[int] = Column(Integer, primary_key=True)
+    name: Mapped[str] = Column(String)
+    artist: Mapped[str] = Column(String)
+    description: Mapped[str] = Column(String)
+    year: Mapped[str] = Column(String)
+    city_id: Mapped[int] = mapped_column(ForeignKey("cities.id"))
+
+    city: Mapped["City"] = relationship(back_populates="songs")
+    tags: Mapped[list["Tag"]] = relationship(back_populates="songs", secondary=SongTag)
 
 
-class Song(SongBase, table=True):
-    id: int = Field(default=None, nullable=False, primary_key=True)
+class Tag(Base):
+    __tablename__ = "tags"
 
-    city: Optional["City"] = Relationship(back_populates="songs")
-    tags: list["Tag"] = Relationship(back_populates="songs", link_model=SongTag)
-
-
-class SongRead(SQLModel):
-    id: int
-    name: str
-    artist: str
-    description: str | None = None
-    year: int | None = None
-    city: Optional["City"]
-    tags: list["Tag"]
+    id: Mapped[int] = Column(Integer, primary_key=True)
+    songs: Mapped[list["Song"]] = relationship(back_populates="tags", secondary=SongTag)
 
 
-class TagCreate(SQLModel):
-    title: str
-    description: str
+class City(Base):
+    __tablename__ = "cities"
 
+    id: Mapped[int] = Column(Integer, primary_key=True)
+    name: Mapped[str] = Column(String)
 
-class Tag(TagCreate, table=True):
-    id: int = Field(default=None, nullable=False, primary_key=True)
-
-    songs: list["Song"] = Relationship(back_populates="tags", link_model=SongTag)
-
-
-class CityCreate(SQLModel):
-    title: str
-    desc: str
-
-
-class City(CityCreate, table=True):
-    id: int = Field(default=None, nullable=False, primary_key=True)
-
-    songs: list["Song"] = Relationship(back_populates="city")
-
+    songs: Mapped[list["Song"]] = relationship(back_populates="city")
