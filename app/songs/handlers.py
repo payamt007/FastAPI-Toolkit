@@ -21,18 +21,6 @@ async def get_songs(
     return songs
 
 
-# songs = session.exec(select(Song, City.title).join(City, isouter=True)).all()
-# current_user: Annotated[User, Depends(get_current_active_user)],
-# return [
-#     {"name": song[0].name,
-#      "artist": song[0].artist,
-#      "year": song[0].year,
-#      "id": song[0].id,
-#      "description": song[0].description,
-#      "city": song[1]}
-#     for song in songs
-# ]
-
 @router.post("/songs")
 async def add_song(song: SongCreate, session: AsyncSession = Depends(get_db_session)):
     new_song = Song(
@@ -97,9 +85,9 @@ async def attach_tag_to_song(
     await session.commit()
     await session.refresh(song)
     return {"done": True}
-#
-#
-# @router.post("/redis")
-# def save_in_redis(key: str, value: str):
-#     r.set(key, value)
-#     return {"done": True}
+
+
+@router.post("/redis")
+def save_in_redis(key: str, value: str):
+    r.set(key, value)
+    return {"done": True}

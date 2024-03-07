@@ -29,6 +29,7 @@ motor = "^3"
 pymongo = "^4"
 Jinja2 = "^3"
 asyncpg = "^0.29"
+pytest-asyncio = "^0.23"
 
 [tool.poetry.group.dev.dependencies]
 commitizen = "^3"
