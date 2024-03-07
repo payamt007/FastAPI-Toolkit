@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from ..auth.handlers import get_current_active_user
 from ..auth.models import User
@@ -16,12 +17,12 @@ router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-# @router.get("/songs", response_model=list[SongRead])
-# async def get_songs(
-#         current_user: Annotated[User, Depends(get_current_active_user)],
-#         session: AsyncSession = Depends(get_db_session)):
-#     songs = await session.execute(select(Song))
-#     return songs
+@router.get("/songs", response_model=list[SongRead])
+async def get_songs(
+        session: AsyncSession = Depends(get_db_session)):
+    result = await session.execute(select(Song).options(selectinload(Song.tags)))
+    songs = result.scalars().all()
+    return songs
 
 
 # songs = session.exec(select(Song, City.title).join(City, isouter=True)).all()

@@ -1,5 +1,3 @@
-from typing import Optional
-
 from pydantic import BaseModel, field_validator
 
 
@@ -24,16 +22,6 @@ class SongCreate(BaseModel):
         return value
 
 
-class SongRead(BaseModel):
-    id: int
-    name: str
-    artist: str
-    description: str | None = None
-    year: int | None = None
-    city: Optional["City"]
-    tags: list["Tag"]
-
-
 class CityCreate(BaseModel):
     name: str
 
@@ -49,3 +37,16 @@ class TagCreate(BaseModel):
 
 class TagRead(TagCreate):
     id: int
+
+
+class SongRead(BaseModel):
+    id: int
+    name: str
+    artist: str
+    description: str | None = None
+    year: int | None = None
+    city: CityRead | None
+    tags: list[TagRead]
+
+    # class Config:
+    #     from_attributes = True
