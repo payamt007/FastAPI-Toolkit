@@ -16,8 +16,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 @router.get("/songs", response_model=list[SongRead])
 async def get_songs(
         session: AsyncSession = Depends(get_db_session)):
-    result = await session.execute(select(Song).options(selectinload(Song.tags)))
-    songs = result.scalars().all()
+    result = await session.scalars(select(Song).options(selectinload(Song.tags), selectinload(Song.city)))
+    songs = result.all()
     return songs
 
 
@@ -56,19 +56,21 @@ async def create_city(*, session: AsyncSession = Depends(get_db_session), city: 
     return new_city
 
 
-# @router.post("/connect_city_with_song", response_model=Song)
-# def connect_city_with_song(
-#         city_title: str, song_title: str, session: AsyncSession = Depends(get_db_session)
-# ):
-#     city_in_db = session.exec(select(City).where(City.title == city_title)).first()
-#     song = session.exec(select(Song).where(Song.name.like(f"%{song_title}%"))).first()
-#     song.city = city_in_db
-#     session.add(song)
-#     session.commit()
-#     session.refresh(song)
-#     return song
-#
-#
+@router.post("/connect_city_with_song")
+async def connect_city_with_song(
+        city_title: str, song_title: str, session: AsyncSession = Depends(get_db_session)
+):
+    city_in_db = await session.scalars(select(City).where(City.name == city_title))
+    city = city_in_db.first()
+    song_in_db = await session.scalars(select(Song).where(Song.name.like(f"%{song_title}%")))
+    song = song_in_db.first()
+    song.city = city
+    session.add(song)
+    await session.commit()
+    await session.refresh(song)
+    return {"done": True}
+
+
 @router.post("/tags", response_model=TagRead)
 async def create_tag(*, session: AsyncSession = Depends(get_db_session), tag: TagCreate):
     input_tag = TagCreate.model_validate(tag)
