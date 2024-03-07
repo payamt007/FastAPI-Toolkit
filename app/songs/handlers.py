@@ -3,8 +3,8 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..db import get_db_session
-from .models import City
-from .schemas import CityCreate, CityRead
+from .models import City, Tag
+from .schemas import CityCreate, CityRead, TagCreate, TagRead
 
 router = APIRouter()
 
@@ -45,12 +45,14 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 @router.post("/city", response_model=CityRead)
-def create_city(*, session: AsyncSession = Depends(get_db_session), city: CityCreate):
-    new_city = City(**city.dict())
+async def create_city(*, session: AsyncSession = Depends(get_db_session), city: CityCreate):
+    # new_city = City(**city.dict())
+    new_city = City(name=city.name)
     session.add(new_city)
-    session.commit()
-    session.refresh(new_city)
+    await session.commit()
+    await session.refresh(new_city)
     return new_city
+
 
 # @router.post("/connect_city_with_song", response_model=Song)
 # def connect_city_with_song(
@@ -65,13 +67,14 @@ def create_city(*, session: AsyncSession = Depends(get_db_session), city: CityCr
 #     return song
 #
 #
-# @router.post("/tags", response_model=Tag)
-# def create_tag(*, session: AsyncSession = Depends(get_db_session), tag: TagCreate):
-#     new_tag = Tag.model_validate(tag)
-#     session.add(new_tag)
-#     session.commit()
-#     session.refresh(new_tag)
-#     return new_tag
+@router.post("/tags", response_model=TagRead)
+async def create_tag(*, session: AsyncSession = Depends(get_db_session), tag: TagCreate):
+    input_tag = TagCreate.model_validate(tag)
+    new_tag = Tag(**input_tag.dict())
+    session.add(new_tag)
+    await session.commit()
+    await session.refresh(new_tag)
+    return new_tag
 #
 #
 # @router.post("/attach-tags")

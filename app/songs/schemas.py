@@ -16,9 +16,9 @@ class SongRead(BaseModel):
 class SongBase(BaseModel):
     name: str
     artist: str
-    description: str | None = None
-    year: int | None = None
-    city_id: int | None = Field(default=None, foreign_key="city.id")
+    description: str | None
+    year: int | None
+    city_id: int | None
 
     @field_validator("year")
     @classmethod
@@ -36,8 +36,7 @@ class SongBase(BaseModel):
 
 
 class CityCreate(BaseModel):
-    title: str
-    desc: str
+    name: str
 
 
 class CityRead(CityCreate):
@@ -47,3 +46,7 @@ class CityRead(CityCreate):
 class TagCreate(BaseModel):
     title: str
     description: str
+
+
+class TagRead(TagCreate):
+    id: int

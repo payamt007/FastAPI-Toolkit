@@ -16,7 +16,7 @@ from sqlmodel import Session, select
 
 from ..db import engine, get_db_session
 from .models import User
-from .schema import UserCreate, UserRead
+from .schemas import UserCreate, UserRead
 
 # to get a string like this run:
 # openssl rand -hex 32

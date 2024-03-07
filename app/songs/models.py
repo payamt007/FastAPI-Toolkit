@@ -21,15 +21,18 @@ class Song(Base):
     year: Mapped[str] = Column(String)
     city_id: Mapped[int] = mapped_column(ForeignKey("cities.id"))
 
-    city: Mapped["City"] = relationship(back_populates="songs")
-    tags: Mapped[list["Tag"]] = relationship(back_populates="songs", secondary=SongTag)
+    city: Mapped["City"] = relationship("City", back_populates="songs")
+    tags: Mapped[list["Tag"]] = relationship("Tag", back_populates="songs", secondary=SongTag.__table__)
 
 
 class Tag(Base):
     __tablename__ = "tags"
-
     id: Mapped[int] = Column(Integer, primary_key=True)
-    songs: Mapped[list["Song"]] = relationship(back_populates="tags", secondary=SongTag)
+
+    title: Mapped[str] = Column(String)
+    description: Mapped[str] = Column(String)
+
+    songs: Mapped[list["Song"]] = relationship(back_populates="tags", secondary=SongTag.__table__)
 
 
 class City(Base):
@@ -38,4 +41,4 @@ class City(Base):
     id: Mapped[int] = Column(Integer, primary_key=True)
     name: Mapped[str] = Column(String)
 
-    songs: Mapped[list["Song"]] = relationship(back_populates="city")
+    songs: Mapped[list["Song"]] = relationship("Song", back_populates="city")
