@@ -1,16 +1,12 @@
-from typing import Annotated
-
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from ..auth.handlers import get_current_active_user
-from ..auth.models import User
 from ..db import get_db_session
 from .models import City, Song, Tag
-from .schemas import CityCreate, CityRead, SongRead, TagCreate, TagRead, SongCreate
+from .schemas import CityCreate, CityRead, SongCreate, SongRead, TagCreate, TagRead
 
 router = APIRouter()
 
@@ -81,23 +77,24 @@ async def create_tag(*, session: AsyncSession = Depends(get_db_session), tag: Ta
     await session.commit()
     await session.refresh(new_tag)
     return new_tag
-#
-#
-# @router.post("/attach-tags")
-# def attach_tag_to_song(
-#         tag_title: str, song_name: str, session: AsyncSession = Depends(get_db_session)
-# ):
-#     tag_in_db = session.exec(
-#         select(Tag).where(Tag.title.like(f"%{tag_title}%"))
-#     ).first()
-#     song_in_db = session.exec(
-#         select(Song).where(Song.name.like(f"%{song_name}%"))
-#     ).first()
-#     song_in_db.tags.append(tag_in_db)
-#     session.add(song_in_db)
-#     session.commit()
-#     session.refresh(song_in_db)
-#     return {"done": True}
+
+
+@router.post("/attach-tags")
+async def attach_tag_to_song(
+        tag_title: str, song_name: str, session: AsyncSession = Depends(get_db_session)
+):
+    tag_in_db = await session.scalars(
+        select(Tag).where(Tag.title.like(f"%{tag_title}%"))
+    )
+    tag = tag_in_db.first()
+    song_in_db = await session.scalars(
+        select(Song).options(selectinload(Song.tags)).where(Song.name.like(f"%{song_name}%")))
+    song = song_in_db.first()
+    song.tags.append(tag)
+    session.add(tag)
+    await session.commit()
+    await session.refresh(song)
+    return {"done": True}
 #
 #
 # @router.post("/redis")
