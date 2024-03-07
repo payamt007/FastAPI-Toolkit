@@ -11,25 +11,25 @@ from .songs.handlers import router as song_router
 
 app = FastAPI()
 
-app.include_router(song_router)
-app.include_router(auth_router)
-app.include_router(files_router)
-app.include_router(ws_router)
-app.include_router(nosql_router)
-
-origins = [
-    "http://localhost.tiangolo.com",
-    "https://localhost.tiangolo.com",
-    "http://localhost",
-    "http://localhost:8080",
-]
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# app.include_router(song_router)
+# app.include_router(auth_router)
+# app.include_router(files_router)
+# app.include_router(ws_router)
+# app.include_router(nosql_router)
+#
+# origins = [
+#     "http://localhost.tiangolo.com",
+#     "https://localhost.tiangolo.com",
+#     "http://localhost",
+#     "http://localhost:8080",
+# ]
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=origins,
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 
 @app.get("/ping")
@@ -37,9 +37,9 @@ async def pong():
     return {"ping": "pong!"}
 
 
-@app.get("/bootstrap", response_class=HTMLResponse)
-async def read_item(request: Request, user_id: str):
-    templates = Jinja2Templates(directory="app/templates")
-    return templates.TemplateResponse(
-        request=request, name="index.html", context={"id": user_id}
-    )
+# @app.get("/bootstrap", response_class=HTMLResponse)
+# async def read_item(request: Request, user_id: str):
+#     templates = Jinja2Templates(directory="app/templates")
+#     return templates.TemplateResponse(
+#         request=request, name="index.html", context={"id": user_id}
+#     )
