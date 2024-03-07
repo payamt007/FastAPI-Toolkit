@@ -3,22 +3,11 @@ from typing import Optional
 from pydantic import BaseModel, field_validator
 
 
-class SongRead(BaseModel):
-    id: int
+class SongCreate(BaseModel):
     name: str
     artist: str
     description: str | None = None
     year: int | None = None
-    city: Optional["City"]
-    tags: list["Tag"]
-
-
-class SongBase(BaseModel):
-    name: str
-    artist: str
-    description: str | None
-    year: int | None
-    city_id: int | None
 
     @field_validator("year")
     @classmethod
@@ -33,6 +22,16 @@ class SongBase(BaseModel):
         if value is not None and len(value) < 5:
             raise ValueError("Description must be at least 5 characters long")
         return value
+
+
+class SongRead(BaseModel):
+    id: int
+    name: str
+    artist: str
+    description: str | None = None
+    year: int | None = None
+    city: Optional["City"]
+    tags: list["Tag"]
 
 
 class CityCreate(BaseModel):

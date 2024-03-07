@@ -1,10 +1,15 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordBearer
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ..auth.handlers import get_current_active_user
+from ..auth.models import User
 from ..db import get_db_session
-from .models import City, Tag
-from .schemas import CityCreate, CityRead, TagCreate, TagRead
+from .models import City, Song, Tag
+from .schemas import CityCreate, CityRead, SongRead, TagCreate, TagRead, SongCreate
 
 router = APIRouter()
 
@@ -15,8 +20,10 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 # async def get_songs(
 #         current_user: Annotated[User, Depends(get_current_active_user)],
 #         session: AsyncSession = Depends(get_db_session)):
-#     songs = session.exec(select(Song)).all()
+#     songs = await session.execute(select(Song))
 #     return songs
+
+
 # songs = session.exec(select(Song, City.title).join(City, isouter=True)).all()
 # current_user: Annotated[User, Depends(get_current_active_user)],
 # return [
@@ -29,19 +36,17 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 #     for song in songs
 # ]
 
-
-# @router.post("/songs")
-# async def add_song(song: SongCreate, session: AsyncSession = Depends(get_db_session)):
-#     new_song = Song(
-#         name=song.name,
-#         artist=song.artist,
-#         year=song.year,
-#         description=song.description,
-#     )
-#     session.add(new_song)
-#     await session.commit()
-#     await session.refresh(new_song)
-#     return new_song
+@router.post("/songs")
+async def add_song(song: SongCreate, session: AsyncSession = Depends(get_db_session)):
+    new_song = Song(
+        name=song.name,
+        artist=song.artist,
+        year=song.year,
+        description=song.description,
+    )
+    session.add(new_song)
+    await session.commit()
+    return new_song
 
 
 @router.post("/city", response_model=CityRead)

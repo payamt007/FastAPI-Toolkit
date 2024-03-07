@@ -18,8 +18,8 @@ class Song(Base):
     name: Mapped[str] = Column(String)
     artist: Mapped[str] = Column(String)
     description: Mapped[str] = Column(String)
-    year: Mapped[str] = Column(String)
-    city_id: Mapped[int] = mapped_column(ForeignKey("cities.id"))
+    year: Mapped[int] = Column(Integer)
+    city_id: Mapped[int | None] = mapped_column(ForeignKey("cities.id"))
 
     city: Mapped["City"] = relationship("City", back_populates="songs")
     tags: Mapped[list["Tag"]] = relationship("Tag", back_populates="songs", secondary=SongTag.__table__)
