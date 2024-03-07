@@ -2,6 +2,7 @@ import os
 from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
+import bcrypt
 from fastapi import APIRouter, Depends, HTTPException, Security, status
 from fastapi.security import (
     OAuth2PasswordBearer,
@@ -9,18 +10,19 @@ from fastapi.security import (
     SecurityScopes,
 )
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 from pydantic import BaseModel, ValidationError
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import Session, select
 
-from ..db import engine
-from .models import BaseUser, User
+from ..db import engine, get_db_session
+from .models import User
+from .schema import UserCreate
 
 # to get a string like this run:
 # openssl rand -hex 32
-SECRET_KEY = os.environ.get("SECRET_KEY")
-ALGORITHM = os.environ.get("ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES = os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES")
+SECRET_KEY = os.environ.get("SECRET_KEY") or "sample_secret_key_here!!!"
+ALGORITHM = os.environ.get("ALGORITHM") or "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES") or 30
 
 router = APIRouter()
 
@@ -28,7 +30,6 @@ oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl="token",
     scopes={"me": "Read information about the current user.", "items": "Read items."},
 )
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 class Token(BaseModel):
@@ -42,11 +43,12 @@ class TokenData(BaseModel):
 
 
 def verify_password(plain_password, hashed_password):
-    return pwd_context.verify(plain_password, hashed_password)
+    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password)
 
 
 def get_password_hash(password: str):
-    return pwd_context.hash(password)
+    salt = bcrypt.gensalt(rounds=14)
+    return bcrypt.hashpw(password.encode('utf-8'), salt)
 
 
 def get_user(username: str | None):
@@ -78,7 +80,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 
 
 async def get_current_user(
-    security_scopes: SecurityScopes, token: Annotated[str, Depends(oauth2_scheme)]
+        security_scopes: SecurityScopes, token: Annotated[str, Depends(oauth2_scheme)]
 ):
     if security_scopes.scopes:
         authenticate_value = f'Bearer scope="{security_scopes.scope_str}"'
@@ -112,7 +114,7 @@ async def get_current_user(
 
 
 async def get_current_active_user(
-    current_user: Annotated[User, Security(get_current_user, scopes=["me"])],
+        current_user: Annotated[User, Security(get_current_user, scopes=["me"])],
 ):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
@@ -121,7 +123,7 @@ async def get_current_active_user(
 
 @router.post("/token")
 async def login_for_access_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+        form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Token:
     user = authenticate_user(form_data.username, form_data.password)
     if not user:
@@ -138,27 +140,26 @@ async def login_for_access_token(
     return Token(access_token=access_token, token_type="bearer")
 
 
-@router.get("/user", response_model=User)
-async def get_current_active_user_from_token(
-    current_user: Annotated[User, Depends(get_current_active_user)],
-):
-    return current_user
+# @router.get("/user", response_model=User)
+# async def get_current_active_user_from_token(
+#         current_user: Annotated[User, Depends(get_current_active_user)],
+# ):
+#     return current_user
 
 
 @router.post("/user")
-async def register_user(user: BaseUser):
-    with Session(engine) as session:
-        new_user = User(
-            username=user.username,
-            full_name=user.full_name,
-            email=user.email,
-            password=get_password_hash(user.password),
-        )
-        session.add(new_user)
-        session.commit()
-        session.refresh(new_user)
-        return {
-            "username": user.username,
-            "full_name": user.full_name,
-            "email": user.email,
-        }
+async def register_user(user: UserCreate, session: AsyncSession = Depends(get_db_session)):
+    new_user = User(
+        username=user.username,
+        full_name=user.full_name,
+        email=user.email,
+        password=get_password_hash(user.password),
+    )
+    session.add(new_user)
+    await session.commit()
+    await session.refresh(new_user)
+    return {
+        "username": user.username,
+        "full_name": user.full_name,
+        "email": user.email,
+    }
