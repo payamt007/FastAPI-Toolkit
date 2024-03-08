@@ -50,13 +50,13 @@ services:
       - "5557:5555"
     depends_on:
       - redis
-  mongo:
-    image: mongo:7.0.5
-    restart: always
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodb-data:/data/db
+#  mongo:
+#    image: mongo:7.0.5
+#    restart: always
+#    ports:
+#      - "27017:27017"
+#    volumes:
+#      - mongodb-data:/data/db
   nginx:
     build: ./nginx
     volumes:
@@ -69,4 +69,4 @@ services:
 volumes:
   static_volume:
   postgres_data:
-  mongodb-data:
+#  mongodb-data:

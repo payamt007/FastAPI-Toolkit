@@ -1,13 +1,14 @@
-from sqlmodel import Field, SQLModel
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import Mapped
+
+from ..db import Base
 
 
-class BaseUser(SQLModel):
-    username: str
-    email: str | None = None
-    full_name: str | None = None
-    password: str
+class User(Base):
+    __tablename__ = "users"
 
-
-class User(BaseUser, table=True):
-    id: int = Field(default=None, nullable=False, primary_key=True)
-    disabled: bool | None = None
+    id: Mapped[int] = Column(Integer, primary_key=True)
+    username: Mapped[str] = Column(String)
+    email: Mapped[str] = Column(String)
+    full_name: Mapped[str | None] = Column(String)
+    password: Mapped[str] = Column(String)

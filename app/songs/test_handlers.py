@@ -1,5 +1,9 @@
-def test_add_song(client):
-    response = client.post(
+import pytest
+
+
+@pytest.mark.asyncio
+async def test_add_song(client):
+    response = await client.post(
         "/songs",
         json={"name": "Alen", "artist": "test", "year": 1960},
     )

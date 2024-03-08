@@ -1,28 +1,34 @@
-import pytest
-from fastapi.testclient import TestClient
-from sqlmodel import Session, SQLModel, create_engine
+import pytest_asyncio
+from httpx import AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from .db import get_session
+from .db import Base, get_db_session
 from .main import app
 
 
-@pytest.fixture(name="session")
-def session_fixture():
-    engine = create_engine(
-        "sqlite:///testing.db", connect_args={"check_same_thread": False}
+@pytest_asyncio.fixture(name="session")
+async def session_fixture():
+    engine = create_async_engine(
+        "sqlite+aiosqlite:///database2.db", connect_args={"check_same_thread": False}
     )
-    SQLModel.metadata.create_all(engine)
-    with Session(engine) as session:
+    async_session = async_sessionmaker(engine, expire_on_commit=False)
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    session = async_session()
+    try:
         yield session
+    finally:
+        await session.close()
 
 
-@pytest.fixture(name="client")
-def client_fixture(session: Session):
+@pytest_asyncio.fixture(name="client")
+async def client_fixture(session: AsyncSession):
     def get_session_override():
         return session
 
-    app.dependency_overrides[get_session] = get_session_override
+    app.dependency_overrides[get_db_session] = get_session_override
 
-    client = TestClient(app)
-    yield client
+    async with AsyncClient(app=app, base_url="http://127.0.0.1:8000") as async_client:
+        yield async_client
+
     app.dependency_overrides.clear()

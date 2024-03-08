@@ -8,15 +8,14 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-fastapi = "^0.109"
+fastapi = "^0.110"
 uvicorn = "^0.27"
-sqlmodel = "0.0.16"
-psycopg2-binary = "^2"
+#psycopg2-binary = "^2"
 redis = "^4"
 celery = "^5"
 alembic = "^1"
 tenacity = "^8"
-aiosqlite = "^0.19"
+aiosqlite = "^0.20"
 pytest = "^8"
 httpx = "^0.26"
 pre-commit = "^3"
@@ -28,6 +27,8 @@ coverage = "^7"
 motor = "^3"
 pymongo = "^4"
 Jinja2 = "^3"
+asyncpg = "^0.29"
+pytest-asyncio = "^0.23"
 
 [tool.poetry.group.dev.dependencies]
 commitizen = "^3"
@@ -52,7 +53,7 @@ fix = true
 indent-width = 4
 line-length = 88
 target-version = "py311"
-exclude = ["migrations/*.*"]
+exclude = ["migrations/*.*", "alembic/*.*"]
 
 lint.select = [
     "E", # pycodestyle errors
@@ -75,7 +76,7 @@ known-third-party = ["fastapi", "pydantic", "starlette"]
 
 [tool.mypy]
 python_version = 3.11
-exclude = ['.venv/*.*', 'app/songs/models.py', 'migrations/*.*']
+exclude = ['.venv/*.*', 'app/songs/models.py', 'migrations/*.*', "alembic/*.*"]
 
 [tool.commitizen]
 name = "cz_conventional_commits"

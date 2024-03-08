@@ -1,14 +1,12 @@
-from typing import Annotated
-
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordBearer
-from sqlmodel import Session, select
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
-from ..auth.handlers import get_current_active_user
-from ..auth.models import User
-from ..db import get_session
-from ..redis import r
-from .models import City, CityCreate, Song, SongCreate, SongRead, Tag, TagCreate
+from ..db import get_db_session
+from .models import City, Song, Tag
+from .schemas import CityCreate, CityRead, SongCreate, SongRead, TagCreate, TagRead
 
 router = APIRouter()
 
@@ -17,26 +15,14 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 @router.get("/songs", response_model=list[SongRead])
 async def get_songs(
-    current_user: Annotated[User, Depends(get_current_active_user)],
-    session: Session = Depends(get_session),
-):
-    songs = session.exec(select(Song)).all()
+        session: AsyncSession = Depends(get_db_session)):
+    result = await session.scalars(select(Song).options(selectinload(Song.tags), selectinload(Song.city)))
+    songs = result.all()
     return songs
-    # songs = session.exec(select(Song, City.title).join(City, isouter=True)).all()
-    # current_user: Annotated[User, Depends(get_current_active_user)],
-    # return [
-    #     {"name": song[0].name,
-    #      "artist": song[0].artist,
-    #      "year": song[0].year,
-    #      "id": song[0].id,
-    #      "description": song[0].description,
-    #      "city": song[1]}
-    #     for song in songs
-    # ]
 
 
 @router.post("/songs")
-async def add_song(song: SongCreate, session: Session = Depends(get_session)):
+async def add_song(song: SongCreate, session: AsyncSession = Depends(get_db_session)):
     new_song = Song(
         name=song.name,
         artist=song.artist,
@@ -44,56 +30,60 @@ async def add_song(song: SongCreate, session: Session = Depends(get_session)):
         description=song.description,
     )
     session.add(new_song)
-    session.commit()
-    session.refresh(new_song)
+    await session.commit()
     return new_song
 
 
-@router.post("/city", response_model=City)
-def create_city(*, session: Session = Depends(get_session), city: CityCreate):
-    new_city = City.model_validate(city)
+@router.post("/city", response_model=CityRead)
+async def create_city(*, session: AsyncSession = Depends(get_db_session), city: CityCreate):
+    # new_city = City(**city.dict())
+    new_city = City(name=city.name)
     session.add(new_city)
-    session.commit()
-    session.refresh(new_city)
+    await session.commit()
+    await session.refresh(new_city)
     return new_city
 
 
-@router.post("/connect_city_with_song", response_model=Song)
-def connect_city_with_song(
-    city_title: str, song_title: str, session: Session = Depends(get_session)
+@router.post("/connect_city_with_song")
+async def connect_city_with_song(
+        city_title: str, song_title: str, session: AsyncSession = Depends(get_db_session)
 ):
-    city_in_db = session.exec(select(City).where(City.title == city_title)).first()
-    song = session.exec(select(Song).where(Song.name.like(f"%{song_title}%"))).first()
-    song.city = city_in_db
+    city_in_db = await session.scalars(select(City).where(City.name == city_title))
+    city = city_in_db.first()
+    song_in_db = await session.scalars(select(Song).where(Song.name.like(f"%{song_title}%")))
+    song = song_in_db.first()
+    song.city = city
     session.add(song)
-    session.commit()
-    session.refresh(song)
-    return song
+    await session.commit()
+    await session.refresh(song)
+    return {"done": True}
 
 
-@router.post("/tags", response_model=Tag)
-def create_tag(*, session: Session = Depends(get_session), tag: TagCreate):
-    new_tag = Tag.model_validate(tag)
+@router.post("/tags", response_model=TagRead)
+async def create_tag(*, session: AsyncSession = Depends(get_db_session), tag: TagCreate):
+    input_tag = TagCreate.model_validate(tag)
+    new_tag = Tag(**input_tag.dict())
     session.add(new_tag)
-    session.commit()
-    session.refresh(new_tag)
+    await session.commit()
+    await session.refresh(new_tag)
     return new_tag
 
 
 @router.post("/attach-tags")
-def attach_tag_to_song(
-    tag_title: str, song_name: str, session: Session = Depends(get_session)
+async def attach_tag_to_song(
+        tag_title: str, song_name: str, session: AsyncSession = Depends(get_db_session)
 ):
-    tag_in_db = session.exec(
+    tag_in_db = await session.scalars(
         select(Tag).where(Tag.title.like(f"%{tag_title}%"))
-    ).first()
-    song_in_db = session.exec(
-        select(Song).where(Song.name.like(f"%{song_name}%"))
-    ).first()
-    song_in_db.tags.append(tag_in_db)
-    session.add(song_in_db)
-    session.commit()
-    session.refresh(song_in_db)
+    )
+    tag = tag_in_db.first()
+    song_in_db = await session.scalars(
+        select(Song).options(selectinload(Song.tags)).where(Song.name.like(f"%{song_name}%")))
+    song = song_in_db.first()
+    song.tags.append(tag)
+    session.add(tag)
+    await session.commit()
+    await session.refresh(song)
     return {"done": True}
 
 
