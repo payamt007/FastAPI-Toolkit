@@ -4,10 +4,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def paginate(
-    session: AsyncSession,
-    query,
-    page: int = 1,
-    per_page: int = 10,
+        session: AsyncSession,
+        query,
+        page: int = 1,
+        per_page: int = 10,
 ):
     """
     Paginate a SQLModel query.
@@ -29,14 +29,14 @@ async def paginate(
         raise HTTPException(status_code=404, detail="Page not found")
 
     offset = (page - 1) * per_page
-    items = await session.scalars(query.offset(offset).limit(per_page))
-    result = items.all()
+    items = await session.execute(query.offset(offset).limit(per_page))
+    result = items.scalars().all()
 
     next_page = page + 1 if page < total_pages else None
 
     pagination = {
-        "total_pages": total_pages,
         "current_page": page,
+        "total_pages": total_pages,
         "next_page": next_page,
     }
 
