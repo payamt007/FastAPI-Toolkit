@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fastapi-toolkit"
-version = "0.0.2"
+version = "0.0.3"
 description = "A Sample FastAPI app"
 authors = ["Payam Taheri"]
 license = "MIT"
@@ -80,7 +80,7 @@ exclude = ['.venv/*.*', 'app/songs/models.py', 'migrations/*.*', "alembic/*.*"]
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.0.2"
+version = "0.0.3"
 tag_format = "v$version"
 version_files = [
     "README.md",
