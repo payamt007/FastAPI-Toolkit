@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -6,21 +6,31 @@ from sqlalchemy.orm import selectinload
 
 from ..db import get_db_session
 from ..redis import r
+from ..utils.pagination import paginate
 from .models import City, Song, Tag
-from .schemas import CityCreate, CityRead, SongCreate, SongRead, TagCreate, TagRead
+from .schemas import (
+    CityCreate,
+    CityRead,
+    SongCreate,
+    TagCreate,
+    TagRead,
+)
 
 router = APIRouter()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-@router.get("/songs", response_model=list[SongRead])
-async def get_songs(session: AsyncSession = Depends(get_db_session)):
-    result = await session.scalars(
-        select(Song).options(selectinload(Song.tags), selectinload(Song.city))
-    )
-    songs = result.all()
-    return songs
+@router.get("/songs")
+async def get_songs(
+    page: int = Query(1, ge=1),
+    per_page: int = Query(5, le=100),
+    session: AsyncSession = Depends(get_db_session),
+):
+    query = select(Song).options(selectinload(Song.tags), selectinload(Song.city))
+    items, pagination = await paginate(session, query, page, per_page)
+
+    return {"meta": pagination, "data": items}
 
 
 @router.post("/songs")
