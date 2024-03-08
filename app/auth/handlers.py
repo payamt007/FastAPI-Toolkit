@@ -11,15 +11,13 @@ from fastapi.security import (
 )
 from jose import JWTError, jwt
 from pydantic import BaseModel, ValidationError
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlmodel import Session, select
 
-from ..db import engine, get_db_session
+from ..db import async_session, get_db_session
 from .models import User
 from .schemas import UserCreate, UserRead
 
-# to get a string like this run:
-# openssl rand -hex 32
 SECRET_KEY = os.environ.get("SECRET_KEY") or "sample_secret_key_here!!!"
 ALGORITHM = os.environ.get("ALGORITHM") or "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES") or 30
@@ -51,16 +49,15 @@ def get_password_hash(password: str):
     return bcrypt.hashpw(password.encode('utf-8'), salt)
 
 
-def get_user(username: str | None):
-    with Session(engine) as session:
-        # SQLModel.metadata.create_all(engine)
-        result = session.exec(select(User).where(User.username == username))
-        user = result.first()
-        return user
+async def get_user(username: str | None):
+    session = async_session()
+    result = await session.execute(select(User).where(User.username == username))
+    user = result.scalar()
+    return user
 
 
-def authenticate_user(username: str, password: str):
-    user = get_user(username)
+async def authenticate_user(username: str, password: str):
+    user = await get_user(username)
     if not user:
         return False
     if not verify_password(password, user.password):
@@ -125,7 +122,7 @@ async def get_current_active_user(
 async def login_for_access_token(
         form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Token:
-    user = authenticate_user(form_data.username, form_data.password)
+    user = await authenticate_user(form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
