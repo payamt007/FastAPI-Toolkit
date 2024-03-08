@@ -1,8 +1,7 @@
 # FastAPI + SQLModel + Alembic + Celery + MongoDB + Redis + jwt Auth
 
-This project is an opinionated boilerplate for **FastAPI** micro framework that uses  **_SQLAlchemy_**,
-_**SQLModel**_, **_PostgresSQL_**, _**Alembic**_, **_Celery_**, **_MongoDB_**, _**Redis**_, **_Docker_** and *
-*_jwt Authentication_**. You can use this ready to
+This project is an opinionated boilerplate for **FastAPI** micro framework that uses,
+_**Asynchronous SQLAlchemy**_, **_PostgresSQL_**, _**Alembic**_, **_Celery_**, **_MongoDB_**, _**Redis**_, **_Docker_** and **_jwt Authentication_**. You can use this ready to
 use sample and don't worry about CI pipelines and running database migrations and tests inside a FastAPI project.
 
 ## Add new tables to PostgresSQL database :
@@ -22,13 +21,16 @@ Create `__init__.py` file and a empty `models.py` file inside folder
 and paste this sample content inside `models.py` file:
 
 ```python 
-from sqlmodel import Field, SQLModel
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import Mapped, declarative_base
+
+Base = declarative_base()
 
 
-class Artist(SQLModel, table=True):
-    id: int = Field(default=None, nullable=False, primary_key=True)
-    name: str
-    city: str
+class Artist(Base):
+    id: Mapped[int] = Column(Integer, primary_key=True)
+    name: Mapped[str] = Column(String, primary_key=True)
+    city: Mapped[str] = Column(String, primary_key=True)
 ```
 
 go to `migrations/env.py` folder in root directory and add this content to it:
