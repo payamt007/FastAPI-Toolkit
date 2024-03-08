@@ -22,7 +22,9 @@ class Song(Base):
     city_id: Mapped[int | None] = mapped_column(ForeignKey("cities.id"))
 
     city: Mapped["City"] = relationship("City", back_populates="songs")
-    tags: Mapped[list["Tag"]] = relationship("Tag", back_populates="songs", secondary=SongTag.__table__)
+    tags: Mapped[list["Tag"]] = relationship(
+        "Tag", back_populates="songs", secondary=SongTag.__table__
+    )
 
 
 class Tag(Base):
@@ -32,7 +34,9 @@ class Tag(Base):
     title: Mapped[str] = Column(String)
     description: Mapped[str] = Column(String)
 
-    songs: Mapped[list["Song"]] = relationship(back_populates="tags", secondary=SongTag.__table__)
+    songs: Mapped[list["Song"]] = relationship(
+        back_populates="tags", secondary=SongTag.__table__
+    )
 
 
 class City(Base):

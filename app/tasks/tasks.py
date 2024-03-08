@@ -12,7 +12,9 @@ logger = get_task_logger(__name__)
 
 async def get_songs():
     async with async_session() as session:
-        await session.execute(update(Song).where(Song.id == 1).values(year=Song.year + 1))
+        await session.execute(
+            update(Song).where(Song.id == 1).values(year=Song.year + 1)
+        )
         await session.commit()
 
 

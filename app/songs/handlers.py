@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from ..db import get_db_session
+from ..redis import r
 from .models import City, Song, Tag
 from .schemas import CityCreate, CityRead, SongCreate, SongRead, TagCreate, TagRead
 
@@ -14,9 +15,10 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 @router.get("/songs", response_model=list[SongRead])
-async def get_songs(
-        session: AsyncSession = Depends(get_db_session)):
-    result = await session.scalars(select(Song).options(selectinload(Song.tags), selectinload(Song.city)))
+async def get_songs(session: AsyncSession = Depends(get_db_session)):
+    result = await session.scalars(
+        select(Song).options(selectinload(Song.tags), selectinload(Song.city))
+    )
     songs = result.all()
     return songs
 
@@ -35,7 +37,9 @@ async def add_song(song: SongCreate, session: AsyncSession = Depends(get_db_sess
 
 
 @router.post("/city", response_model=CityRead)
-async def create_city(*, session: AsyncSession = Depends(get_db_session), city: CityCreate):
+async def create_city(
+    *, session: AsyncSession = Depends(get_db_session), city: CityCreate
+):
     # new_city = City(**city.dict())
     new_city = City(name=city.name)
     session.add(new_city)
@@ -46,11 +50,13 @@ async def create_city(*, session: AsyncSession = Depends(get_db_session), city: 
 
 @router.post("/connect_city_with_song")
 async def connect_city_with_song(
-        city_title: str, song_title: str, session: AsyncSession = Depends(get_db_session)
+    city_title: str, song_title: str, session: AsyncSession = Depends(get_db_session)
 ):
     city_in_db = await session.scalars(select(City).where(City.name == city_title))
     city = city_in_db.first()
-    song_in_db = await session.scalars(select(Song).where(Song.name.like(f"%{song_title}%")))
+    song_in_db = await session.scalars(
+        select(Song).where(Song.name.like(f"%{song_title}%"))
+    )
     song = song_in_db.first()
     song.city = city
     session.add(song)
@@ -60,7 +66,9 @@ async def connect_city_with_song(
 
 
 @router.post("/tags", response_model=TagRead)
-async def create_tag(*, session: AsyncSession = Depends(get_db_session), tag: TagCreate):
+async def create_tag(
+    *, session: AsyncSession = Depends(get_db_session), tag: TagCreate
+):
     input_tag = TagCreate.model_validate(tag)
     new_tag = Tag(**input_tag.dict())
     session.add(new_tag)
@@ -71,14 +79,17 @@ async def create_tag(*, session: AsyncSession = Depends(get_db_session), tag: Ta
 
 @router.post("/attach-tags")
 async def attach_tag_to_song(
-        tag_title: str, song_name: str, session: AsyncSession = Depends(get_db_session)
+    tag_title: str, song_name: str, session: AsyncSession = Depends(get_db_session)
 ):
     tag_in_db = await session.scalars(
         select(Tag).where(Tag.title.like(f"%{tag_title}%"))
     )
     tag = tag_in_db.first()
     song_in_db = await session.scalars(
-        select(Song).options(selectinload(Song.tags)).where(Song.name.like(f"%{song_name}%")))
+        select(Song)
+        .options(selectinload(Song.tags))
+        .where(Song.name.like(f"%{song_name}%"))
+    )
     song = song_in_db.first()
     song.tags.append(tag)
     session.add(tag)

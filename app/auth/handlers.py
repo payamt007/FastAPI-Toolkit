@@ -41,12 +41,12 @@ class TokenData(BaseModel):
 
 
 def verify_password(plain_password, hashed_password):
-    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password)
+    return bcrypt.checkpw(plain_password.encode("utf-8"), hashed_password)
 
 
 def get_password_hash(password: str):
     salt = bcrypt.gensalt(rounds=14)
-    return bcrypt.hashpw(password.encode('utf-8'), salt)
+    return bcrypt.hashpw(password.encode("utf-8"), salt)
 
 
 async def get_user(username: str | None):
@@ -77,7 +77,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 
 
 async def get_current_user(
-        security_scopes: SecurityScopes, token: Annotated[str, Depends(oauth2_scheme)]
+    security_scopes: SecurityScopes, token: Annotated[str, Depends(oauth2_scheme)]
 ):
     if security_scopes.scopes:
         authenticate_value = f'Bearer scope="{security_scopes.scope_str}"'
@@ -111,7 +111,7 @@ async def get_current_user(
 
 
 async def get_current_active_user(
-        current_user: Annotated[User, Security(get_current_user, scopes=["me"])],
+    current_user: Annotated[User, Security(get_current_user, scopes=["me"])],
 ):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
@@ -120,7 +120,7 @@ async def get_current_active_user(
 
 @router.post("/token")
 async def login_for_access_token(
-        form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Token:
     user = await authenticate_user(form_data.username, form_data.password)
     if not user:
@@ -139,14 +139,16 @@ async def login_for_access_token(
 
 @router.get("/user", response_model=UserRead)
 async def get_current_active_user_from_token(
-        current_user: Annotated[User, Depends(get_current_active_user)],
+    current_user: Annotated[User, Depends(get_current_active_user)],
 ):
     return current_user
 
 
 @router.post("/user", response_model=UserRead)
-async def register_user(user: UserCreate, session: AsyncSession = Depends(get_db_session),
-                        ):
+async def register_user(
+    user: UserCreate,
+    session: AsyncSession = Depends(get_db_session),
+):
     new_user = User(
         username=user.username,
         full_name=user.full_name,
