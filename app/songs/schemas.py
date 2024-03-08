@@ -50,3 +50,8 @@ class SongRead(BaseModel):
 
     # class Config:
     #     from_attributes = True
+
+
+class PaginatedSong(BaseModel):
+    data: list[SongRead]
+    meta: dict[str, int | None]
