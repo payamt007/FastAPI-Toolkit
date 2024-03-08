@@ -23,9 +23,9 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 @router.get("/songs")
 async def get_songs(
-        page: int = Query(1, ge=1),
-        per_page: int = Query(5, le=100),
-        session: AsyncSession = Depends(get_db_session),
+    page: int = Query(1, ge=1),
+    per_page: int = Query(5, le=100),
+    session: AsyncSession = Depends(get_db_session),
 ):
     query = select(Song).options(selectinload(Song.tags), selectinload(Song.city))
     items, pagination = await paginate(session, query, page, per_page)
@@ -48,7 +48,7 @@ async def add_song(song: SongCreate, session: AsyncSession = Depends(get_db_sess
 
 @router.post("/city", response_model=CityRead)
 async def create_city(
-        *, session: AsyncSession = Depends(get_db_session), city: CityCreate
+    *, session: AsyncSession = Depends(get_db_session), city: CityCreate
 ):
     # new_city = City(**city.dict())
     new_city = City(name=city.name)
@@ -60,7 +60,7 @@ async def create_city(
 
 @router.post("/connect_city_with_song")
 async def connect_city_with_song(
-        city_title: str, song_title: str, session: AsyncSession = Depends(get_db_session)
+    city_title: str, song_title: str, session: AsyncSession = Depends(get_db_session)
 ):
     city_in_db = await session.scalars(select(City).where(City.name == city_title))
     city = city_in_db.first()
@@ -77,7 +77,7 @@ async def connect_city_with_song(
 
 @router.post("/tags", response_model=TagRead)
 async def create_tag(
-        *, session: AsyncSession = Depends(get_db_session), tag: TagCreate
+    *, session: AsyncSession = Depends(get_db_session), tag: TagCreate
 ):
     input_tag = TagCreate.model_validate(tag)
     new_tag = Tag(**input_tag.dict())
@@ -89,7 +89,7 @@ async def create_tag(
 
 @router.post("/attach-tags")
 async def attach_tag_to_song(
-        tag_title: str, song_name: str, session: AsyncSession = Depends(get_db_session)
+    tag_title: str, song_name: str, session: AsyncSession = Depends(get_db_session)
 ):
     tag_in_db = await session.scalars(
         select(Tag).where(Tag.title.like(f"%{tag_title}%"))

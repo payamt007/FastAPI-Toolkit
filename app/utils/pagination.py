@@ -4,10 +4,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def paginate(
-        session: AsyncSession,
-        query,
-        page: int = 1,
-        per_page: int = 10,
+    session: AsyncSession,
+    query,
+    page: int = 1,
+    per_page: int = 10,
 ):
     """
     Paginate a SQLModel query.
