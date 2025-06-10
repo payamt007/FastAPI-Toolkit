@@ -1,90 +1,67 @@
-[tool.poetry]
-name = "fastapi-toolkit"
-version = "0.0.3"
-description = "A Sample FastAPI app"
-authors = ["Payam Taheri"]
-license = "MIT"
+[project]
+name = "konux-task"
+version = "0.0.1"
+description = "A sample konux task"
 readme = "README.md"
 
-[tool.poetry.dependencies]
-python = "^3.11"
-fastapi = "^0.110"
-uvicorn = "^0.27"
-#psycopg2-binary = "^2"
-redis = "^4"
-celery = "^5"
-alembic = "^1"
-tenacity = "^8"
-aiosqlite = "^0.20"
-pytest = "^8"
-httpx = "^0.26"
-pre-commit = "^3"
-python-multipart = "0.0.9"
-python-jose = { version = "^3", extras = ["cryptography"] }
-passlib = { version = "^1", extras = ["bcrypt"] }
-websockets = "^12"
-coverage = "^7"
-motor = "^3"
-pymongo = "^4"
-Jinja2 = "^3"
-asyncpg = "^0.29"
-pytest-asyncio = "^0.23"
+requires-python = ">=3.13"
 
-[tool.poetry.group.dev.dependencies]
-commitizen = "^3"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn>=0.34",
+    "redis>=5",
+    "celery[redis]>=5",
+    "python-dotenv>=1.1",
+]
 
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.11",
+    "pre-commit>=4.2.0",
+]
 
-[tool.poetry.group.lint.dependencies]
-ruff = "^0.2"
-mypy = "^1"
-
-[tool.poetry.group.mypy.dependencies]
-types-python-jose = "^3"
-types-passlib = "^1"
-celery-stubs = "^0.1"
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+test = [
+    "pytest>=8.4",
+    "pytest-cov>=6.1",
+    "pytest-asyncio>=1.0"
+]
 
 [tool.ruff]
-fix = true
-indent-width = 4
-line-length = 88
-target-version = "py311"
-exclude = ["migrations/*.*", "alembic/*.*"]
+# Enable flake8-bugbear (`B`) rules.
+lint.select = ["E", "F", "B", "I"]
 
-lint.select = [
-    "E", # pycodestyle errors
-    "W", # pycodestyle warnings
-    "F", # pyflakes
-    "I", # isort
-    "B", # flake8-bugbear
-    "C4", # flake8-comprehensions
-    "UP", # pyupgrade
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".git",
+    ".ruff_cache",
+    "__pypackages__",
+    "dist",
+    "build",
+    ".venv",
 ]
-lint.ignore = [
-    "E501", # line too long, handled by black
-    "B008", # do not perform function calls in argument defaults
-    "W191", # indentation contains tabs
-]
+
+# Same as Black.
+line-length = 108
+
+# Allow unused variables when underscore-prefixed.
+lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+
+target-version = "py313"
+
+# Enable auto-fixing of errors
+fix = true
+
+[tool.ruff.lint.per-file-ignores]
+# Ignore imported but unused in __init__.py files
+"__init__.py" = ["F401"]
 
 [tool.ruff.lint.isort]
-known-third-party = ["fastapi", "pydantic", "starlette"]
+known-first-party = ["jobscrapper"]
 
-
-[tool.mypy]
-python_version = 3.11
-exclude = ['.venv/*.*', 'app/songs/models.py', 'migrations/*.*', "alembic/*.*"]
-
-[tool.commitizen]
-name = "cz_conventional_commits"
-version = "0.0.3"
-tag_format = "v$version"
-version_files = [
-    "README.md",
-    "pyproject.toml:version",
-    "app/__init__.py:__version__",
-]
-major_version_zero = true
+[tool.ruff.format]
+# Use double quotes for strings.
+quote-style = "double"
+# Indent with 4 spaces.
+indent-style = "space"
+line-ending = "auto"
