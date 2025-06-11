@@ -11,7 +11,7 @@ from .main import app
 @pytest_asyncio.fixture(name="session")
 async def session_fixture():
     engine = create_async_engine(
-        "sqlite+aiosqlite:///database2.db", connect_args={"check_same_thread": False}
+        "sqlite+aiosqlite:///:memory:", connect_args={"check_same_thread": False}
     )
     async_session = async_sessionmaker(engine, expire_on_commit=False)
     async with engine.begin() as conn:
@@ -33,9 +33,6 @@ async def client_fixture(session: AsyncSession):
     test_client = TestClient(app)
 
     yield test_client
-
-    # async with AsyncClient(transport=test_client.transport) as async_client:
-    #     yield async_client
 
     app.dependency_overrides.clear()
 
