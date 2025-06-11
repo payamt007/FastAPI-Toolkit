@@ -22,6 +22,7 @@ dependencies = [
     "pymongo>=4.13",
     "motor>=3.7",
     "alembic>=1.16",
+    "httpx>=0.28"
 ]
 
 [project.optional-dependencies]
@@ -76,3 +77,11 @@ quote-style = "double"
 # Indent with 4 spaces.
 indent-style = "space"
 line-ending = "auto"
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-ra -q"
+testpaths = ["app", "tests"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')"
+]

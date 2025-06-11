@@ -1,6 +1,8 @@
+import pytest
 import pytest_asyncio
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from fastapi.testclient import TestClient
 
 from .db import Base, get_db_session
 from .main import app
@@ -28,7 +30,19 @@ async def client_fixture(session: AsyncSession):
 
     app.dependency_overrides[get_db_session] = get_session_override
 
-    async with AsyncClient(app=app, base_url="http://127.0.0.1:8000") as async_client:
-        yield async_client
+    test_client = TestClient(app)
+
+    yield test_client
+
+    # async with AsyncClient(transport=test_client.transport) as async_client:
+    #     yield async_client
 
     app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def sample_user_date():
+    return {
+        "username": "testuser",
+        "email": "test@gmail.com"
+    }
