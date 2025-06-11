@@ -9,10 +9,19 @@ from fastapi.security import (
     OAuth2PasswordRequestForm,
     SecurityScopes,
 )
-from jose import JWTError, jwt
 from pydantic import BaseModel, ValidationError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from datetime import datetime, timedelta, timezone
+from typing import Annotated
+
+import jwt
+from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from jwt.exceptions import InvalidTokenError
+from passlib.context import CryptContext
+from pydantic import BaseModel
+
 
 from ..db import async_session, get_db_session
 from .models import User
@@ -77,7 +86,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
 
 
 async def get_current_user(
-    security_scopes: SecurityScopes, token: Annotated[str, Depends(oauth2_scheme)]
+        security_scopes: SecurityScopes, token: Annotated[str, Depends(oauth2_scheme)]
 ):
     if security_scopes.scopes:
         authenticate_value = f'Bearer scope="{security_scopes.scope_str}"'
@@ -95,7 +104,7 @@ async def get_current_user(
             raise credentials_exception
         token_scopes = payload.get("scopes", [])
         token_data = TokenData(scopes=token_scopes, username=username)
-    except (JWTError, ValidationError) as err:
+    except InvalidTokenError as err:
         raise credentials_exception from err
     user = get_user(username=token_data.username)
     if user is None:
@@ -111,7 +120,7 @@ async def get_current_user(
 
 
 async def get_current_active_user(
-    current_user: Annotated[User, Security(get_current_user, scopes=["me"])],
+        current_user: Annotated[User, Security(get_current_user, scopes=["me"])],
 ):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
@@ -120,7 +129,7 @@ async def get_current_active_user(
 
 @router.post("/token")
 async def login_for_access_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+        form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Token:
     user = await authenticate_user(form_data.username, form_data.password)
     if not user:
@@ -139,15 +148,15 @@ async def login_for_access_token(
 
 @router.get("/user", response_model=UserRead)
 async def get_current_active_user_from_token(
-    current_user: Annotated[User, Depends(get_current_active_user)],
+        current_user: Annotated[User, Depends(get_current_active_user)],
 ):
     return current_user
 
 
 @router.post("/user", response_model=UserRead)
 async def register_user(
-    user: UserCreate,
-    session: AsyncSession = Depends(get_db_session),
+        user: UserCreate,
+        session: AsyncSession = Depends(get_db_session),
 ):
     new_user = User(
         username=user.username,
