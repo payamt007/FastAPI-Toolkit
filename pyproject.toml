@@ -80,7 +80,7 @@ line-ending = "auto"
 
 [tool.pytest.ini_options]
 minversion = "8.0"
-addopts = "-ra -q"
+addopts = "-ra --strict-markers --cov=app --cov-report=term-missing"
 testpaths = ["app", "tests"]
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')"
