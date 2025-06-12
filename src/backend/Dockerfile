@@ -9,30 +9,25 @@ WORKDIR /files/
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# Install dependencies
-#RUN apt-get update && \
-#    apt-get install -y dos2unix &&\
-#    wget -qO- https://astral.sh/uv/install.sh | sh && \
-#    export PATH="/root/.cargo/bin:${PATH}" && \
-#    apt-get clean && \
-#    rm -rf /var/lib/apt/lists/*
-#
-#ENV PATH="/root/.cargo/bin:${PATH}"
-# add the rest of the application files
+COPY src/backend/pyproject.toml src/backend/uv.lock ./
 
-COPY pyproject.toml uv.lock ./
+# Install dependencies directly to system Python
+RUN uv pip install --system .
 
-# Install dependencies without creating a virtual environment
-RUN uv sync --frozen --no-dev --no-install-project
+## Install dependencies without creating a virtual environment
+#RUN uv sync --frozen --no-dev --no-install-project
 
-COPY app .
+COPY src/backend ./src/backend
 
 # Install the project itself
-RUN uv pip install --no-deps .
+#RUN uv pip install --no-deps .
 
 # set executable permissions in a single RUN command
 #RUN chmod +x /files/scripts/start.sh /files/scripts/prestart.sh
 #RUN dos2unix /files/scripts/start.sh /files/scripts/prestart.sh
+COPY scripts ./scripts/
+
+RUN chmod +x /files/scripts/start.sh
 
 # define the command to run the application
 CMD ["/files/scripts/start.sh"]
