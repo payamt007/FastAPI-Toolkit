@@ -1,0 +1,93 @@
+[project]
+name = "konux-task"
+version = "0.0.1"
+description = "A sample konux task"
+readme = "README.md"
+
+requires-python = ">=3.13"
+
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn>=0.34",
+    "redis>=6.2",
+    "celery[redis]>=5",
+    "python-dotenv>=1.1",
+    "bcrypt>=4.3",
+    "sqlalchemy>=2.0",
+    "pyjwt>=2.10",
+    "passlib>=1.7",
+    "aiosqlite>=0.21",
+    "python-multipart>=0.0.20",
+    "pymongo>=4.13",
+    "motor>=3.7",
+    "alembic>=1.16",
+    "httpx>=0.28"
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.11",
+    "pre-commit>=4.2.0",
+    "ty>=0.0.1a8",
+]
+
+test = [
+    "pytest>=8.4",
+    "pytest-cov>=6.1",
+    "pytest-asyncio>=1.0"
+]
+
+[tool.ruff]
+# Enable flake8-bugbear (`B`) rules.
+lint.select = ["E", "F", "B", "I"]
+
+# Allow unused variables when underscore-prefixed.
+lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".git",
+    ".ruff_cache",
+    "__pypackages__",
+    "dist",
+    "build",
+    ".venv",
+]
+
+# Same as Black.
+line-length = 108
+
+
+target-version = "py313"
+
+# Enable auto-fixing of errors
+fix = true
+
+[tool.ruff.lint.per-file-ignores]
+# Ignore imported but unused in __init__.py files
+"__init__.py" = ["F401"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["jobscrapper"]
+
+[tool.ruff.format]
+# Use double quotes for strings.
+quote-style = "double"
+# Indent with 4 spaces.
+indent-style = "space"
+line-ending = "auto"
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-ra --strict-markers --cov=app --cov-report=term-missing"
+testpaths = ["app", "tests"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')"
+]
+
+#[build-system]
+#requires = ["setuptools>=80.9.0"]
+#build-backend = "setuptools.build_meta"
+#
+#[tool.setuptools]
+#packages = ["src.app.backend"]

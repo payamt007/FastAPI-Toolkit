@@ -36,7 +36,7 @@ class Artist(Base):
 go to `migrations/env.py` folder in root directory and add this content to it:
 
 ```python
-from app.artists.models import Artist
+from src.backend import Artist
 ```
 
 then run new migration command in root directory:

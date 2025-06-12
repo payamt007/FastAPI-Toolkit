@@ -1,0 +1,30 @@
+Metadata-Version: 2.4
+Name: konux-task
+Version: 0.0.1
+Summary: A sample konux task
+Requires-Python: >=3.13
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi>=0.115
+Requires-Dist: uvicorn>=0.34
+Requires-Dist: redis>=5
+Requires-Dist: celery[redis]>=5
+Requires-Dist: python-dotenv>=1.1
+Requires-Dist: bcrypt>=4.3
+Requires-Dist: sqlalchemy>=2.0
+Requires-Dist: pyjwt>=2.10
+Requires-Dist: passlib>=1.7
+Requires-Dist: aiosqlite>=0.21
+Requires-Dist: python-multipart>=0.0.20
+Requires-Dist: bson>=0.5
+Requires-Dist: pymongo>=4.13
+Requires-Dist: motor>=3.7
+Requires-Dist: alembic>=1.16
+Requires-Dist: httpx>=0.28
+Provides-Extra: dev
+Requires-Dist: ruff>=0.11; extra == "dev"
+Requires-Dist: pre-commit>=4.2.0; extra == "dev"
+Requires-Dist: ty>=0.0.1a8; extra == "dev"
+Provides-Extra: test
+Requires-Dist: pytest>=8.4; extra == "test"
+Requires-Dist: pytest-cov>=6.1; extra == "test"
+Requires-Dist: pytest-asyncio>=1.0; extra == "test"
